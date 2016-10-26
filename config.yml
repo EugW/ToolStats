@@ -88,4 +88,4 @@ break:
     sound:
       enabled: true
       sound: BLOCK_ANVIL_USE
-version: 2.6B
+version: 2.7

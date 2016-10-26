@@ -1,7 +1,7 @@
 name: ToolStats
 description: Collect stats of using tool
 main: Main
-version: 2.6B
+version: 2.7
 author: EugeneWhite
 commands:
   toolstats:

@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 
 public class Main extends JavaPlugin implements Listener {
-    private String ver = "2.6B";
+    private String ver = "2.7";
 
     @Override
     public void onEnable() {
