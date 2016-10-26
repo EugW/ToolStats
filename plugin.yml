@@ -1,0 +1,19 @@
+name: ToolStats
+description: Collect stats of using tool
+main: Main
+version: 2.6B
+author: EugeneWhite
+commands:
+  toolstats:
+    description: Reload
+    usage: /toolstats
+permissions:
+  toolstats.reload:
+    description: Reload permission
+    default: op
+  toolstats.counter:
+    description: Allow counter
+    default: op
+  toolstats.upgrade:
+    description: Allow upgrade
+    default: op

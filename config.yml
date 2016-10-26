@@ -1,0 +1,91 @@
+settings:
+  reload: 'Config reloaded'
+  noPerm: 'No permission'
+kill:
+  tools:
+    - DIAMOND_SWORD
+    - IRON_SWORD
+    - GOLD_SWORD
+    - STONE_SWORD
+    - WOOD_SWORD
+  player:
+    lore: '&cKilled players'
+    reward:
+      enabled: true
+      count: 10
+      enchant:
+        enabled: true
+        ench:
+          - DAMAGE_ALL:10
+          - DAMAGE_UNDEAD:1
+          - KNOCKBACK:2
+          - FIRE_ASPECT:1
+      exp:
+        enabled: true
+        lvl: 100
+      items:
+        enabled: true
+        give:
+          - GLOWSTONE:5
+      sound:
+        enabled: true
+        sound: BLOCK_ANVIL_USE
+  mob:
+    lore: '&cKilled mobs'
+    reward:
+      enabled: true
+      count: 20
+      enchant:
+        enabled: true
+        ench:
+          - DAMAGE_ALL:5
+          - KNOCKBACK:3
+          - FIRE_ASPECT:1
+      exp:
+        enabled: true
+        lvl: 100
+      items:
+        enabled: true
+        give:
+          - GLOWSTONE:6
+      sound:
+        enabled: true
+        sound: BLOCK_ANVIL_USE
+break:
+  lore: '&aDestroyed blocks'
+  tools:
+    - DIAMOND_PICKAXE
+    - DIAMOND_SHOVEL
+    - DIAMOND_AXE
+    - IRON_PICKAXE
+    - IRON_SHOVEL
+    - IRON_AXE
+    - GOLD_PICKAXE
+    - GOLD_SHOVEL
+    - GOLD_AXE
+    - STONE_PICKAXE
+    - STONE_SHOVEL
+    - STONE_AXE
+    - WOOD_PICKAXE
+    - WOOD_SHOVEL
+    - WOOD_AXE
+  reward:
+    enabled: true
+    count: 30
+    enchant:
+      enabled: true
+      ench:
+        - DIG_SPEED:2
+        - SILK_TOUCH:1
+        - DURABILITY:4
+    exp:
+      enabled: true
+      lvl: 100
+    items:
+      enabled: true
+      give:
+        - GLOWSTONE:7
+    sound:
+      enabled: true
+      sound: BLOCK_ANVIL_USE
+version: 2.6B
