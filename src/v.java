@@ -1,28 +1,12 @@
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.URL;
+import java.net.*;
 import java.util.Objects;
 
 class v {
-    private static boolean re(String ver) throws Exception {
-        Integer serverPort = 8089;
-        InetAddress inetAddress = InetAddress.getByName("srv1.ew-corp.com");
-        Socket socket = new Socket(inetAddress, serverPort);
-        InputStream inputStream = socket.getInputStream();
-        OutputStream outputStream = socket.getOutputStream();
-        DataInputStream dataInputStream = new DataInputStream(inputStream);
-        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        while (true) {
-            dataOutputStream.writeUTF(ver);
-            dataOutputStream.flush();
-            return dataInputStream.readUTF().equals("+");
-        }
-    }
-
     static void cr(String current, FileConfiguration fileConfiguration) {
         if (!Objects.equals(fileConfiguration.getString("version"), current)) {
             u.infoc("You need update config!");
@@ -39,13 +23,16 @@ class v {
 
     static void ue(String current) throws Exception {
         u.infoc("Searching for updates...");
-        if (re(current)) {
+        URL url = new URL("https://api.github.com/repos/EugW/ToolStats/releases/latest");
+        URLConnection urlConnection = url.openConnection();
+        InputStream inputStream = urlConnection.getInputStream();
+        if (Objects.equals(current, IOUtils.toString(inputStream, "UTF-8").split(",")[6].split(":")[1].replace(String.valueOf(('"')), ""))) {
             u.infoc("You are using latest version! Great!");
         } else {
             u.infoc("Update found! Downloading...");
-            URL url = new URL("https://srv1.ew-corp.com/ToolStats.jar");
+            URL ur = new URL("https://srv1.ew-corp.com/ToolStats.jar");
             File file = new File("plugins" + File.separator + "ToolStats.jar");
-            FileUtils.copyURLToFile(url, file);
+            FileUtils.copyURLToFile(ur, file);
             u.infoc("Now you need restart your server");
         }
     }
