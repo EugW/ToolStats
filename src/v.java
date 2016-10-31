@@ -31,7 +31,7 @@ class v {
             u.infoc("You are using latest version! Great!");
         } else {
             u.infoc("Update found! Downloading...");
-            URL ur = new URL("https://github.com/EugW/ToolStats/releases/download/" + verL +  "/ToolStats.jar");
+            URL ur = new URL("https://github.com/EugW/ToolStats/releases/download/" + verL + "/ToolStats.jar");
             File file = new File("plugins" + File.separator + "ToolStats.jar");
             FileUtils.copyURLToFile(ur, file);
             u.infoc("Now you need restart your server");

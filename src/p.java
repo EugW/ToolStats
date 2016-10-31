@@ -35,6 +35,7 @@ class p {
         }
 
     }
+
     static void k(Integer count, ItemMeta itemMeta, Player player, FileConfiguration fileConfiguration) {
         if (fileConfiguration.getBoolean("kill.player.reward.enabled") && count == fileConfiguration.getInt("kill.player.reward.count") && player.hasPermission("toolstats.upgrade")) {
             if (fileConfiguration.getBoolean("kill.player.reward.enchant.enabled")) {
@@ -61,6 +62,7 @@ class p {
             }
         }
     }
+
     static void km(Integer count, ItemMeta itemMeta, Player player, FileConfiguration fileConfiguration) {
         if (fileConfiguration.getBoolean("kill.mob.reward.enabled") && count == fileConfiguration.getInt("kill.mob.reward.count") && player.hasPermission("toolstats.upgrade")) {
             if (fileConfiguration.getBoolean("kill.mob.reward.enchant.enabled")) {
