@@ -1,7 +1,6 @@
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.file.FileConfiguration;
-
 import java.io.*;
 import java.net.*;
 import java.util.Objects;
