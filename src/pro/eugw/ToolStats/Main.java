@@ -86,7 +86,6 @@ public class Main extends JavaPlugin implements Listener {
             itemMeta.setLore(lore);
             itemStack.setItemMeta(itemMeta);
             lore.clear();
-
         } else if (!itemMeta.getLore().toString().contains(getConfig().getString("break.lore").replace("&", "\u00a7"))) {
             Integer i = 0;
             while (i < itemMeta.getLore().size() + 1) {
@@ -176,7 +175,6 @@ public class Main extends JavaPlugin implements Listener {
         } else {
             counte = cnte + 1;
             km(counte, itemMeta, player, getConfig());
-
         }
         lore.set(startI, getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": " + countp);
         lore.set(startI + 1, getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": " + counte);
