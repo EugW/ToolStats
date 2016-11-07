@@ -1,3 +1,5 @@
+package pro.eugw.ToolStats;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 

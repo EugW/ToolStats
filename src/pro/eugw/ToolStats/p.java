@@ -1,3 +1,5 @@
+package pro.eugw.ToolStats;
+
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -35,7 +37,7 @@ class p {
 
     }
 
-    static void k(Integer count, ItemMeta itemMeta, Player player, FileConfiguration fileConfiguration) {
+    static void kp(Integer count, ItemMeta itemMeta, Player player, FileConfiguration fileConfiguration) {
         if (fileConfiguration.getBoolean("kill.player.reward.enabled") && count == fileConfiguration.getInt("kill.player.reward.count") && player.hasPermission("toolstats.upgrade")) {
             if (fileConfiguration.getBoolean("kill.player.reward.enchant.enabled")) {
                 Integer i = 0;

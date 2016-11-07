@@ -1,13 +1,22 @@
+package pro.eugw.ToolStats;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.bukkit.configuration.file.FileConfiguration;
-import java.io.*;
-import java.net.*;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Objects;
 
+import static pro.eugw.ToolStats.Main.*;
+
 class v {
-    static void cr(String current, FileConfiguration fileConfiguration) {
-        if (!Objects.equals(fileConfiguration.getString("version"), current)) {
+    static void cr() {
+        if (!au){
+            return;
+        }
+        if (!Objects.equals(config.getString("version"), ver)) {
             u.infoc("You need update config!");
             File configFile = new File("plugins" + File.separator + "ToolStats", "config.yml");
             File file2 = new File("plugins" + File.separator + "ToolStats", "config.backup.yml");
@@ -20,13 +29,16 @@ class v {
         }
     }
 
-    static void ue(String current) throws Exception {
+    static void ue() throws Exception {
+        if (!au){
+            return;
+        }
         u.infoc("Searching for updates...");
         URL url = new URL("https://api.github.com/repos/EugW/ToolStats/releases/latest");
         URLConnection urlConnection = url.openConnection();
         InputStream inputStream = urlConnection.getInputStream();
         String verL = IOUtils.toString(inputStream, "UTF-8").split(",")[6].split(":")[1].replace(String.valueOf(('"')), "");
-        if (Objects.equals(current, verL)) {
+        if (Objects.equals(ver, verL)) {
             u.infoc("You are using latest version! Great!");
         } else {
             u.infoc("Update found! Downloading...");
