@@ -26,7 +26,7 @@ import static pro.eugw.ToolStats.v.ue;
 public class Main extends JavaPlugin implements Listener {
     static FileConfiguration config;
     static String ver = "2.8";
-    static boolean au = false;
+    static boolean au = true;
 
     @Override
     public void onEnable() {
