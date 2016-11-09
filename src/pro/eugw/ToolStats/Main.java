@@ -3,7 +3,6 @@ package pro.eugw.ToolStats;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,17 +14,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 
-import static pro.eugw.ToolStats.p.b;
-import static pro.eugw.ToolStats.p.km;
-import static pro.eugw.ToolStats.p.kp;
+import static pro.eugw.ToolStats.p.*;
 import static pro.eugw.ToolStats.u.info;
 import static pro.eugw.ToolStats.u.infoc;
 import static pro.eugw.ToolStats.v.cr;
 import static pro.eugw.ToolStats.v.ue;
 
 public class Main extends JavaPlugin implements Listener {
-    static FileConfiguration config;
-    static String ver = "2.8";
+
+    static String ver = "2.9";
     static boolean au = true;
 
     @Override
@@ -33,9 +30,9 @@ public class Main extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         infoc("Loading...");
         infoc("Version: " + ver);
-        cr();
         saveDefaultConfig();
-        config = getConfig();
+        cr(getConfig());
+        saveDefaultConfig();
         infoc("Enabled");
         try {
             ue();
@@ -52,7 +49,7 @@ public class Main extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equals("toolstats")) {
             if (sender.hasPermission("toolstats.reload")) {
-                cr();
+                cr(getConfig());
                 saveDefaultConfig();
                 reloadConfig();
                 info(getConfig().getString("settings.reload"), sender);

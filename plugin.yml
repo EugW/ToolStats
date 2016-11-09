@@ -1,7 +1,7 @@
 name: ToolStats
 description: Collect stats of using tool
 main: pro.eugw.ToolStats.Main
-version: 2.8
+version: 2.9
 author: EugeneWhite
 commands:
   toolstats:
