@@ -2,6 +2,7 @@ settings:
   reload: 'Config reloaded'
   noPerm: 'No permission'
 kill:
+  enabled: true
   tools:
     - DIAMOND_SWORD
     - IRON_SWORD
@@ -10,6 +11,7 @@ kill:
     - WOOD_SWORD
   player:
     lore: '&cKilled players'
+    enabled: true
     reward:
       enabled: true
       count: 10
@@ -32,6 +34,7 @@ kill:
         sound: BLOCK_ANVIL_USE
   mob:
     lore: '&cKilled mobs'
+    enabled: true
     reward:
       enabled: true
       count: 20
@@ -53,21 +56,22 @@ kill:
         sound: BLOCK_ANVIL_USE
 break:
   lore: '&aDestroyed blocks'
+  enabled: true
   tools:
     - DIAMOND_PICKAXE
-    - DIAMOND_SHOVEL
+    - DIAMOND_SPADE
     - DIAMOND_AXE
     - IRON_PICKAXE
-    - IRON_SHOVEL
+    - IRON_SPADE
     - IRON_AXE
     - GOLD_PICKAXE
-    - GOLD_SHOVEL
+    - GOLD_SPADE
     - GOLD_AXE
     - STONE_PICKAXE
-    - STONE_SHOVEL
+    - STONE_SPADE
     - STONE_AXE
     - WOOD_PICKAXE
-    - WOOD_SHOVEL
+    - WOOD_SPADE
     - WOOD_AXE
   reward:
     enabled: true
@@ -88,4 +92,4 @@ break:
     sound:
       enabled: true
       sound: BLOCK_ANVIL_USE
-version: 2.9
+version: 3.0

@@ -22,7 +22,7 @@ import static pro.eugw.ToolStats.v.ue;
 
 public class Main extends JavaPlugin implements Listener {
 
-    static String ver = "2.9";
+    static String ver = "3.0";
     static boolean au = true;
 
     @Override
@@ -67,6 +67,9 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     void onBreak(BlockBreakEvent event) {
+        if (!getConfig().getBoolean("break.enabled")){
+            return;
+        }
         Player player = event.getPlayer();
         if (!player.hasPermission("toolstats.counter")) {
             return;
@@ -78,12 +81,14 @@ public class Main extends JavaPlugin implements Listener {
         ItemMeta itemMeta = itemStack.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
         if (itemMeta.getLore() == null) {
+            getServer().broadcastMessage("IF 1 br passed");
             lore.add("");
             lore.set(0, getConfig().getString("break.lore").replace("&", "\u00a7") + ": 0");
             itemMeta.setLore(lore);
             itemStack.setItemMeta(itemMeta);
             lore.clear();
         } else if (!itemMeta.getLore().toString().contains(getConfig().getString("break.lore").replace("&", "\u00a7"))) {
+            getServer().broadcastMessage("IF 2 br passed");
             Integer i = 0;
             while (i < itemMeta.getLore().size() + 1) {
                 lore.add("");
@@ -116,6 +121,9 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onKill(EntityDeathEvent event) {
+        if (!getConfig().getBoolean("kill.enabled")){
+            return;
+        }
         if (event.getEntity().getKiller() == null || !(event.getEntity().getKiller() instanceof Player)) {
             return;
         }
@@ -130,6 +138,7 @@ public class Main extends JavaPlugin implements Listener {
         ItemMeta itemMeta = itemStack.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
         if (itemMeta.getLore() == null) {
+            getServer().broadcastMessage("IF 1 passed");
             lore.add("");
             lore.add("");
             lore.set(0, getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": 0");
@@ -138,7 +147,9 @@ public class Main extends JavaPlugin implements Listener {
             itemStack.setItemMeta(itemMeta);
             lore.clear();
         } else if (!itemMeta.getLore().toString().contains(getConfig().getString("kill.player.lore").replace("&", "\u00a7")) && !itemMeta.getLore().toString().contains(getConfig().getString("kill.mob.lore").replace("&", "\u00a7"))) {
+            getServer().broadcastMessage("IF 2 passed");
             Integer i = 0;
+
             while (i < itemMeta.getLore().size() + 2) {
                 lore.add("");
                 i++;
