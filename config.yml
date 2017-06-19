@@ -1,6 +1,8 @@
 settings:
   reload: 'Config reloaded'
   noPerm: 'No permission'
+  autoUpdate: true
+  configVer: '3.1'
 kill:
   enabled: true
   tools:
@@ -92,4 +94,3 @@ break:
     sound:
       enabled: true
       sound: BLOCK_ANVIL_USE
-version: 3.0

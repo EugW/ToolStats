@@ -22,18 +22,18 @@ import static pro.eugw.ToolStats.v.ue;
 
 public class Main extends JavaPlugin implements Listener {
 
-    static String ver = "3.0";
-    static boolean au = true;
+    static String ver = null;
+    static boolean au = false;
 
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
-        infoc("Loading...");
-        infoc("Version: " + ver);
         saveDefaultConfig();
+        ver = this.getDescription().getVersion();
+        au = this.getConfig().getBoolean("settings.autoUpdate");
+        infoc("Version: " + ver + " enabled. AutoUpdate: " + au);
         cr(getConfig());
         saveDefaultConfig();
-        infoc("Enabled");
         try {
             ue();
         } catch (Exception ignored) {
@@ -81,14 +81,12 @@ public class Main extends JavaPlugin implements Listener {
         ItemMeta itemMeta = itemStack.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
         if (itemMeta.getLore() == null) {
-            getServer().broadcastMessage("IF 1 br passed");
             lore.add("");
             lore.set(0, getConfig().getString("break.lore").replace("&", "\u00a7") + ": 0");
             itemMeta.setLore(lore);
             itemStack.setItemMeta(itemMeta);
             lore.clear();
         } else if (!itemMeta.getLore().toString().contains(getConfig().getString("break.lore").replace("&", "\u00a7"))) {
-            getServer().broadcastMessage("IF 2 br passed");
             Integer i = 0;
             while (i < itemMeta.getLore().size() + 1) {
                 lore.add("");
@@ -138,7 +136,6 @@ public class Main extends JavaPlugin implements Listener {
         ItemMeta itemMeta = itemStack.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
         if (itemMeta.getLore() == null) {
-            getServer().broadcastMessage("IF 1 passed");
             lore.add("");
             lore.add("");
             lore.set(0, getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": 0");
