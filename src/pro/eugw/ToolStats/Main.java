@@ -81,38 +81,26 @@ public class Main extends JavaPlugin implements Listener {
         ItemMeta itemMeta = itemStack.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
         if (itemMeta.getLore() == null) {
-            lore.add("");
-            lore.set(0, getConfig().getString("break.lore").replace("&", "\u00a7") + ": 0");
+            lore.add(getConfig().getString("break.lore").replace("&", "\u00a7") + ": 0");
             itemMeta.setLore(lore);
             itemStack.setItemMeta(itemMeta);
             lore.clear();
         } else if (!itemMeta.getLore().toString().contains(getConfig().getString("break.lore").replace("&", "\u00a7"))) {
-            Integer i = 0;
-            while (i < itemMeta.getLore().size() + 1) {
-                lore.add("");
-                i++;
-            }
-            i = 0;
-            while (i < itemMeta.getLore().size()) {
-                lore.set(i, itemMeta.getLore().get(i));
-                i++;
-            }
-            lore.set(itemMeta.getLore().size(), getConfig().getString("break.lore").replace("&", "\u00a7") + ": 0");
+            lore.addAll(itemMeta.getLore());
+            lore.add(getConfig().getString("break.lore").replace("&", "\u00a7") + ": 0");
             itemMeta.setLore(lore);
             itemStack.setItemMeta(itemMeta);
             lore.clear();
         }
-        Integer stratI = itemMeta.getLore().size() - 1;
-        Integer i = 0;
-        while (i < itemMeta.getLore().size()) {
-            lore.add(itemMeta.getLore().get(i));
-            i++;
+        lore.addAll(itemMeta.getLore());
+        for (String pre : lore) {
+            if (pre.contains(getConfig().getString("break.lore").replace("&", "\u00a7"))){
+                Integer cnt = Integer.valueOf(pre.replaceAll("[\\D]", ""));
+                cnt++;
+                b(cnt, itemMeta, player, getConfig());
+                lore.set(lore.indexOf(pre), getConfig().getString("break.lore").replace("&", "\u00a7") + ": " + cnt);
+            }
         }
-        String[] tag = lore.get(stratI).split(":");
-        Integer cnt = Integer.valueOf(tag[1].replace("[", "").replace(" ", ""));
-        Integer count = cnt + 1;
-        b(count, itemMeta, player, getConfig());
-        lore.set(stratI, getConfig().getString("break.lore").replace("&", "\u00a7") + ": " + count);
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
     }
@@ -136,53 +124,37 @@ public class Main extends JavaPlugin implements Listener {
         ItemMeta itemMeta = itemStack.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
         if (itemMeta.getLore() == null) {
-            lore.add("");
-            lore.add("");
-            lore.set(0, getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": 0");
-            lore.set(1, getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": 0");
+            lore.add(getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": 0");
+            lore.add(getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": 0");
             itemMeta.setLore(lore);
             itemStack.setItemMeta(itemMeta);
             lore.clear();
         } else if (!itemMeta.getLore().toString().contains(getConfig().getString("kill.player.lore").replace("&", "\u00a7")) && !itemMeta.getLore().toString().contains(getConfig().getString("kill.mob.lore").replace("&", "\u00a7"))) {
-            getServer().broadcastMessage("IF 2 passed");
-            Integer i = 0;
-
-            while (i < itemMeta.getLore().size() + 2) {
-                lore.add("");
-                i++;
-            }
-            i = 0;
-            while (i < itemMeta.getLore().size()) {
-                lore.set(i, itemMeta.getLore().get(i));
-                i++;
-            }
-            lore.set(itemMeta.getLore().size(), getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": 0");
-            lore.set(itemMeta.getLore().size() + 1, getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": 0");
+            lore.addAll(itemMeta.getLore());
+            lore.add(getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": 0");
+            lore.add(getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": 0");
             itemMeta.setLore(lore);
             itemStack.setItemMeta(itemMeta);
             lore.clear();
         }
-        Integer startI = itemMeta.getLore().size() - 2;
-        Integer i = 0;
-        while (i < itemMeta.getLore().size()) {
-            lore.add(itemMeta.getLore().get(i));
-            i++;
+        lore.addAll(itemMeta.getLore());
+        for (String pre : lore) {
+            if (event.getEntity() instanceof Player) {
+                if (pre.contains(getConfig().getString("kill.player.lore").replace("&", "\u00a7"))){
+                    Integer cnt = Integer.valueOf(pre.replaceAll("[\\D]", ""));
+                    cnt++;
+                    kp(cnt, itemMeta, player, getConfig());
+                    lore.set(lore.indexOf(pre), getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": " + cnt);
+                }
+            } else {
+                if (pre.contains(getConfig().getString("kill.mob.lore").replace("&", "\u00a7"))){
+                    Integer cnt = Integer.valueOf(pre.replaceAll("[\\D]", ""));
+                    cnt++;
+                    km(cnt, itemMeta, player, getConfig());
+                    lore.set(lore.indexOf(pre), getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": " + cnt);
+                }
+            }
         }
-        String[] tagp = lore.get(startI).split(":");
-        String[] tage = lore.get(startI + 1).split(":");
-        Integer cntp = Integer.valueOf(tagp[1].replace("]", "").replace(" ", ""));
-        Integer cnte = Integer.valueOf(tage[1].replace("]", "").replace(" ", ""));
-        Integer countp = cntp;
-        Integer counte = cnte;
-        if (event.getEntity() instanceof Player) {
-            countp = cntp + 1;
-            kp(countp, itemMeta, player, getConfig());
-        } else {
-            counte = cnte + 1;
-            km(counte, itemMeta, player, getConfig());
-        }
-        lore.set(startI, getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": " + countp);
-        lore.set(startI + 1, getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": " + counte);
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
     }

@@ -2,7 +2,7 @@ settings:
   reload: 'Config reloaded'
   noPerm: 'No permission'
   autoUpdate: true
-  configVer: '3.1'
+  configVer: 3.2
 kill:
   enabled: true
   tools:
@@ -16,22 +16,39 @@ kill:
     enabled: true
     reward:
       enabled: true
-      count: 10
-      enchant:
+      count: 10,20
+      enchant1:
         enabled: true
         ench:
           - DAMAGE_ALL:10
           - DAMAGE_UNDEAD:1
           - KNOCKBACK:2
           - FIRE_ASPECT:1
-      exp:
+      exp1:
         enabled: true
         lvl: 100
-      items:
+      items1:
         enabled: true
         give:
           - GLOWSTONE:5
-      sound:
+      sound1:
+        enabled: true
+        sound: BLOCK_ANVIL_USE
+      enchant2:
+        enabled: true
+        ench:
+          - DAMAGE_ALL:15
+          - DAMAGE_UNDEAD:1
+          - KNOCKBACK:4
+          - FIRE_ASPECT:2
+      exp2:
+        enabled: true
+        lvl: 200
+      items2:
+        enabled: true
+        give:
+          - DIAMOND_SWORD:1
+      sound2:
         enabled: true
         sound: BLOCK_ANVIL_USE
   mob:
@@ -39,21 +56,37 @@ kill:
     enabled: true
     reward:
       enabled: true
-      count: 20
-      enchant:
+      count: 20,40
+      enchant1:
         enabled: true
         ench:
-          - DAMAGE_ALL:5
+          - DAMAGE_ALL:2
           - KNOCKBACK:3
           - FIRE_ASPECT:1
-      exp:
+      exp1:
         enabled: true
         lvl: 100
-      items:
+      items1:
         enabled: true
         give:
           - GLOWSTONE:6
-      sound:
+      sound1:
+        enabled: true
+        sound: BLOCK_ANVIL_USE
+      enchant2:
+        enabled: true
+        ench:
+          - DAMAGE_ALL:5
+          - KNOCKBACK:5
+          - FIRE_ASPECT:2
+      exp2:
+        enabled: true
+        lvl: 200
+      items2:
+        enabled: true
+        give:
+          - DIAMOND_SWORD:1
+      sound2:
         enabled: true
         sound: BLOCK_ANVIL_USE
 break:
@@ -77,20 +110,36 @@ break:
     - WOOD_AXE
   reward:
     enabled: true
-    count: 30
-    enchant:
+    count: 30,40
+    enchant1:
       enabled: true
       ench:
         - DIG_SPEED:2
         - SILK_TOUCH:1
         - DURABILITY:4
-    exp:
+    exp1:
       enabled: true
       lvl: 100
-    items:
+    items1:
       enabled: true
       give:
         - GLOWSTONE:7
-    sound:
+    sound1:
+      enabled: true
+      sound: BLOCK_ANVIL_USE
+    enchant2:
+      enabled: true
+      ench:
+        - DIG_SPEED:5
+        - SILK_TOUCH:2
+        - DURABILITY:5
+    exp2:
+      enabled: true
+      lvl: 200
+    items2:
+      enabled: true
+      give:
+        - DIAMOND_SWORD:1
+    sound2:
       enabled: true
       sound: BLOCK_ANVIL_USE
