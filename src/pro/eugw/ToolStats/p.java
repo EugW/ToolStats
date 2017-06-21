@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 class p {
     static void b(Integer count, ItemMeta itemMeta, Player player, FileConfiguration fileConfiguration) {
         for (Integer i = 1; i <= fileConfiguration.getString("break.reward.count").split(",").length; i++) {
-            if (fileConfiguration.getBoolean("break.reward.enabled") && count.equals(Integer.valueOf(fileConfiguration.getString("break.reward.count").split(",")[i-1])) && player.hasPermission("toolstats.upgrade")) {
+            if (fileConfiguration.getBoolean("break.reward.enabled") && count.equals(Integer.valueOf(fileConfiguration.getString("break.reward.count").split(",")[i - 1])) && player.hasPermission("toolstats.upgrade")) {
                 if (fileConfiguration.getBoolean("break.reward.enchant" + i + ".enabled")) {
                     for (Object pre : fileConfiguration.getList("break.reward.enchant" + i + ".ench")) {
                         String[] ench = pre.toString().split(":");
@@ -37,27 +37,27 @@ class p {
     }
 
     static void kp(Integer count, ItemMeta itemMeta, Player player, FileConfiguration fileConfiguration) {
-        for (Integer i = 1; i <= fileConfiguration.getString("kill.player.reward.count").length(); i++) {
-            if (fileConfiguration.getBoolean("kill.player.reward.enabled") && count.equals(Integer.valueOf(fileConfiguration.getString("kill.player.reward.count").split(",")[i-1])) && player.hasPermission("toolstats.upgrade")) {
-                if (fileConfiguration.getBoolean("kill.player.reward.enchant" + i + ".enabled")) {
-                    for (Object pre : fileConfiguration.getList("kill.player.reward.enchant" + i + ".ench")) {
+        for (Integer i = 1; i <= fileConfiguration.getString("killPlayer.reward.count").split(",").length; i++) {
+            if (fileConfiguration.getBoolean("killPlayer.reward.enabled") && count.equals(Integer.valueOf(fileConfiguration.getString("killPlayer.reward.count").split(",")[i - 1])) && player.hasPermission("toolstats.upgrade")) {
+                if (fileConfiguration.getBoolean("killPlayer.reward.enchant" + i + ".enabled")) {
+                    for (Object pre : fileConfiguration.getList("killPlayer.reward.enchant" + i + ".ench")) {
                         String[] ench = pre.toString().split(":");
                         if (Integer.valueOf(ench[1]) > itemMeta.getEnchantLevel(Enchantment.getByName(ench[0]))) {
                             itemMeta.addEnchant(Enchantment.getByName(ench[0]), Integer.valueOf(ench[1]), true);
                         }
                     }
                 }
-                if (fileConfiguration.getBoolean("kill.player.reward.exp" + i + ".enabled")) {
-                    player.giveExp(fileConfiguration.getInt("kill.player.reward.exp" + i + ".lvl"));
+                if (fileConfiguration.getBoolean("killPlayer.reward.exp" + i + ".enabled")) {
+                    player.giveExp(fileConfiguration.getInt("killPlayer.reward.exp" + i + ".lvl"));
                 }
-                if (fileConfiguration.getBoolean("kill.player.reward.items" + i + ".enabled")) {
-                    for (Object pre : fileConfiguration.getList("kill.player.reward.items" + i + ".give")) {
+                if (fileConfiguration.getBoolean("killPlayer.reward.items" + i + ".enabled")) {
+                    for (Object pre : fileConfiguration.getList("killPlayer.reward.items" + i + ".give")) {
                         String[] item = pre.toString().split(":");
                         player.getInventory().addItem(new ItemStack(Material.getMaterial(item[0]), Integer.valueOf(item[1])));
                     }
                 }
-                if (fileConfiguration.getBoolean("kill.player.reward.sound" + i + ".enabled")) {
-                    player.playSound(player.getLocation(), Sound.valueOf(fileConfiguration.getString("kill.player.reward.sound" + i + ".sound")), 1F, 1F);
+                if (fileConfiguration.getBoolean("killPlayer.reward.sound" + i + ".enabled")) {
+                    player.playSound(player.getLocation(), Sound.valueOf(fileConfiguration.getString("killPlayer.reward.sound" + i + ".sound")), 1F, 1F);
                 }
 
             }
@@ -66,27 +66,27 @@ class p {
     }
 
     static void km(Integer count, ItemMeta itemMeta, Player player, FileConfiguration fileConfiguration) {
-        for (Integer i = 1; i <= fileConfiguration.getString("kill.mob.reward.count").split(",").length; i++) {
-            if (fileConfiguration.getBoolean("kill.mob.reward.enabled") && count.equals(Integer.valueOf(fileConfiguration.getString("kill.mob.reward.count").split(",")[i-1])) && player.hasPermission("toolstats.upgrade")) {
-                if (fileConfiguration.getBoolean("kill.mob.reward.enchant" + i + ".enabled")) {
-                    for (Object pre : fileConfiguration.getList("kill.mob.reward.enchant" + i + ".ench")) {
+        for (Integer i = 1; i <= fileConfiguration.getString("killMob.reward.count").split(",").length; i++) {
+            if (fileConfiguration.getBoolean("killMob.reward.enabled") && count.equals(Integer.valueOf(fileConfiguration.getString("killMob.reward.count").split(",")[i - 1])) && player.hasPermission("toolstats.upgrade")) {
+                if (fileConfiguration.getBoolean("killMob.reward.enchant" + i + ".enabled")) {
+                    for (Object pre : fileConfiguration.getList("killMob.reward.enchant" + i + ".ench")) {
                         String[] ench = pre.toString().split(":");
                         if (Integer.valueOf(ench[1]) > itemMeta.getEnchantLevel(Enchantment.getByName(ench[0]))) {
                             itemMeta.addEnchant(Enchantment.getByName(ench[0]), Integer.valueOf(ench[1]), true);
                         }
                     }
                 }
-                if (fileConfiguration.getBoolean("kill.mob.reward.exp" + i + ".enabled")) {
-                    player.giveExp(fileConfiguration.getInt("kill.mob.reward.exp" + i + ".lvl"));
+                if (fileConfiguration.getBoolean("killMob.reward.exp" + i + ".enabled")) {
+                    player.giveExp(fileConfiguration.getInt("killMob.reward.exp" + i + ".lvl"));
                 }
-                if (fileConfiguration.getBoolean("kill.mob.reward.items" + i + ".enabled")) {
-                    for (Object pre : fileConfiguration.getList("kill.mob.reward.items" + i + ".give")) {
+                if (fileConfiguration.getBoolean("killMob.reward.items" + i + ".enabled")) {
+                    for (Object pre : fileConfiguration.getList("killMob.reward.items" + i + ".give")) {
                         String[] item = pre.toString().split(":");
                         player.getInventory().addItem(new ItemStack(Material.getMaterial(item[0]), Integer.valueOf(item[1])));
                     }
                 }
-                if (fileConfiguration.getBoolean("kill.mob.reward.sound" + i + ".enabled")) {
-                    player.playSound(player.getLocation(), Sound.valueOf(fileConfiguration.getString("kill.mob.reward.sound" + i + ".sound")), 1F, 1F);
+                if (fileConfiguration.getBoolean("killMob.reward.sound" + i + ".enabled")) {
+                    player.playSound(player.getLocation(), Sound.valueOf(fileConfiguration.getString("killMob.reward.sound" + i + ".sound")), 1F, 1F);
                 }
             }
         }

@@ -2,96 +2,100 @@ settings:
   reload: 'Config reloaded'
   noPerm: 'No permission'
   autoUpdate: true
-  configVer: 3.2
-kill:
+  configVer: 3.3
+killPlayer:
   enabled: true
+  lore: '&cKilled players'
   tools:
     - DIAMOND_SWORD
     - IRON_SWORD
     - GOLD_SWORD
     - STONE_SWORD
     - WOOD_SWORD
-  player:
-    lore: '&cKilled players'
+  reward:
     enabled: true
-    reward:
+    count: 10,20
+    enchant1:
+       enabled: true
+       ench:
+         - DAMAGE_ALL:10
+         - DAMAGE_UNDEAD:1
+         - KNOCKBACK:2
+         - FIRE_ASPECT:1
+    exp1:
       enabled: true
-      count: 10,20
-      enchant1:
-        enabled: true
-        ench:
-          - DAMAGE_ALL:10
-          - DAMAGE_UNDEAD:1
-          - KNOCKBACK:2
-          - FIRE_ASPECT:1
-      exp1:
-        enabled: true
-        lvl: 100
-      items1:
-        enabled: true
-        give:
-          - GLOWSTONE:5
-      sound1:
-        enabled: true
-        sound: BLOCK_ANVIL_USE
-      enchant2:
-        enabled: true
-        ench:
-          - DAMAGE_ALL:15
-          - DAMAGE_UNDEAD:1
-          - KNOCKBACK:4
-          - FIRE_ASPECT:2
-      exp2:
-        enabled: true
-        lvl: 200
-      items2:
-        enabled: true
-        give:
-          - DIAMOND_SWORD:1
-      sound2:
-        enabled: true
-        sound: BLOCK_ANVIL_USE
-  mob:
-    lore: '&cKilled mobs'
-    enabled: true
-    reward:
+      lvl: 100
+    items1:
       enabled: true
-      count: 20,40
-      enchant1:
-        enabled: true
-        ench:
-          - DAMAGE_ALL:2
-          - KNOCKBACK:3
-          - FIRE_ASPECT:1
-      exp1:
-        enabled: true
-        lvl: 100
-      items1:
-        enabled: true
-        give:
-          - GLOWSTONE:6
-      sound1:
-        enabled: true
-        sound: BLOCK_ANVIL_USE
-      enchant2:
-        enabled: true
-        ench:
-          - DAMAGE_ALL:5
-          - KNOCKBACK:5
-          - FIRE_ASPECT:2
-      exp2:
-        enabled: true
-        lvl: 200
-      items2:
-        enabled: true
-        give:
-          - DIAMOND_SWORD:1
-      sound2:
-        enabled: true
-        sound: BLOCK_ANVIL_USE
-break:
-  lore: '&aDestroyed blocks'
+      give:
+        - GLOWSTONE:5
+    sound1:
+      enabled: true
+      sound: BLOCK_ANVIL_USE
+    enchant2:
+      enabled: true
+      ench:
+        - DAMAGE_ALL:15
+        - DAMAGE_UNDEAD:1
+        - KNOCKBACK:4
+        - FIRE_ASPECT:2
+    exp2:
+      enabled: true
+      lvl: 200
+    items2:
+      enabled: true
+      give:
+        - DIAMOND_SWORD:1
+    sound2:
+      enabled: true
+      sound: BLOCK_ANVIL_USE
+killMob:
   enabled: true
+  lore: '&cKilled mobs'
+  tools:
+    - DIAMOND_SWORD
+    - IRON_SWORD
+    - GOLD_SWORD
+    - STONE_SWORD
+    - WOOD_SWORD
+  reward:
+    enabled: true
+    count: 20,40
+    enchant1:
+      enabled: true
+      ench:
+        - DAMAGE_ALL:2
+        - KNOCKBACK:3
+        - FIRE_ASPECT:1
+    exp1:
+      enabled: true
+      lvl: 100
+    items1:
+      enabled: true
+      give:
+        - GLOWSTONE:6
+    sound1:
+      enabled: true
+      sound: BLOCK_ANVIL_USE
+    enchant2:
+      enabled: true
+      ench:
+        - DAMAGE_ALL:5
+        - KNOCKBACK:5
+        - FIRE_ASPECT:2
+    exp2:
+      enabled: true
+      lvl: 200
+    items2:
+      enabled: true
+      give:
+        - DIAMOND_SWORD:1
+    sound2:
+      enabled: true
+      sound: BLOCK_ANVIL_USE
+break:
+  enabled: true
+  lore: '&aDestroyed blocks'
   tools:
     - DIAMOND_PICKAXE
     - DIAMOND_SPADE

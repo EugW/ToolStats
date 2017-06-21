@@ -67,7 +67,7 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     void onBreak(BlockBreakEvent event) {
-        if (!getConfig().getBoolean("break.enabled")){
+        if (!getConfig().getBoolean("break.enabled")) {
             return;
         }
         Player player = event.getPlayer();
@@ -94,7 +94,7 @@ public class Main extends JavaPlugin implements Listener {
         }
         lore.addAll(itemMeta.getLore());
         for (String pre : lore) {
-            if (pre.contains(getConfig().getString("break.lore").replace("&", "\u00a7"))){
+            if (pre.contains(getConfig().getString("break.lore").replace("&", "\u00a7"))) {
                 Integer cnt = Integer.valueOf(pre.replaceAll("[\\D]", ""));
                 cnt++;
                 b(cnt, itemMeta, player, getConfig());
@@ -106,8 +106,11 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onKill(EntityDeathEvent event) {
-        if (!getConfig().getBoolean("kill.enabled")){
+    public void onKillPlayer(EntityDeathEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        if (!getConfig().getBoolean("killPlayer.enabled")) {
             return;
         }
         if (event.getEntity().getKiller() == null || !(event.getEntity().getKiller() instanceof Player)) {
@@ -118,42 +121,85 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
         ItemStack itemStack = player.getInventory().getItemInMainHand();
-        if (!getConfig().getList("kill.tools").contains(itemStack.getType().toString())) {
+        if (!getConfig().getList("killPlayer.tools").contains(itemStack.getType().toString())) {
             return;
         }
         ItemMeta itemMeta = itemStack.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
         if (itemMeta.getLore() == null) {
-            lore.add(getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": 0");
-            lore.add(getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": 0");
+            if (getConfig().getBoolean("killPlayer.enabled")) {
+                lore.add(getConfig().getString("killPlayer.lore").replace("&", "\u00a7") + ": 0");
+            }
             itemMeta.setLore(lore);
             itemStack.setItemMeta(itemMeta);
             lore.clear();
-        } else if (!itemMeta.getLore().toString().contains(getConfig().getString("kill.player.lore").replace("&", "\u00a7")) && !itemMeta.getLore().toString().contains(getConfig().getString("kill.mob.lore").replace("&", "\u00a7"))) {
+        } else if (!itemMeta.getLore().toString().contains(getConfig().getString("killPlayer.lore").replace("&", "\u00a7"))) {
             lore.addAll(itemMeta.getLore());
-            lore.add(getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": 0");
-            lore.add(getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": 0");
+            if (getConfig().getBoolean("killPlayer.enabled")) {
+                lore.add(getConfig().getString("killPlayer.lore").replace("&", "\u00a7") + ": 0");
+            }
             itemMeta.setLore(lore);
             itemStack.setItemMeta(itemMeta);
             lore.clear();
         }
         lore.addAll(itemMeta.getLore());
         for (String pre : lore) {
-            if (event.getEntity() instanceof Player) {
-                if (pre.contains(getConfig().getString("kill.player.lore").replace("&", "\u00a7"))){
+                if (pre.contains(getConfig().getString("killPlayer.lore").replace("&", "\u00a7"))) {
                     Integer cnt = Integer.valueOf(pre.replaceAll("[\\D]", ""));
                     cnt++;
                     kp(cnt, itemMeta, player, getConfig());
-                    lore.set(lore.indexOf(pre), getConfig().getString("kill.player.lore").replace("&", "\u00a7") + ": " + cnt);
+                    lore.set(lore.indexOf(pre), getConfig().getString("killPlayer.lore").replace("&", "\u00a7") + ": " + cnt);
                 }
-            } else {
-                if (pre.contains(getConfig().getString("kill.mob.lore").replace("&", "\u00a7"))){
+        }
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+    }
+
+    @EventHandler
+    public void onKillMob(EntityDeathEvent event) {
+        if (event.getEntity() instanceof Player) {
+            return;
+        }
+        if (!getConfig().getBoolean("killMob.enabled")) {
+            return;
+        }
+        if (event.getEntity().getKiller() == null || !(event.getEntity().getKiller() instanceof Player)) {
+            return;
+        }
+        Player player = event.getEntity().getKiller();
+        if (!player.hasPermission("toolstats.counter")) {
+            return;
+        }
+        ItemStack itemStack = player.getInventory().getItemInMainHand();
+        if (!getConfig().getList("killMob.tools").contains(itemStack.getType().toString())) {
+            return;
+        }
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        ArrayList<String> lore = new ArrayList<>();
+        if (itemMeta.getLore() == null) {
+            if (getConfig().getBoolean("killMob.enabled")) {
+                lore.add(getConfig().getString("killMob.lore").replace("&", "\u00a7") + ": 0");
+            }
+            itemMeta.setLore(lore);
+            itemStack.setItemMeta(itemMeta);
+            lore.clear();
+        } else if (!itemMeta.getLore().toString().contains(getConfig().getString("killMob.lore").replace("&", "\u00a7"))) {
+            lore.addAll(itemMeta.getLore());
+            if (getConfig().getBoolean("killMob.enabled")) {
+                lore.add(getConfig().getString("killMob.lore").replace("&", "\u00a7") + ": 0");
+            }
+            itemMeta.setLore(lore);
+            itemStack.setItemMeta(itemMeta);
+            lore.clear();
+        }
+        lore.addAll(itemMeta.getLore());
+        for (String pre : lore) {
+                if (pre.contains(getConfig().getString("killMob.lore").replace("&", "\u00a7"))) {
                     Integer cnt = Integer.valueOf(pre.replaceAll("[\\D]", ""));
                     cnt++;
                     km(cnt, itemMeta, player, getConfig());
-                    lore.set(lore.indexOf(pre), getConfig().getString("kill.mob.lore").replace("&", "\u00a7") + ": " + cnt);
+                    lore.set(lore.indexOf(pre), getConfig().getString("killMob.lore").replace("&", "\u00a7") + ": " + cnt);
                 }
-            }
         }
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
