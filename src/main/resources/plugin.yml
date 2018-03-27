@@ -1,8 +1,8 @@
-name: ToolStats
+name: toolstats
 description: Collect stats of using tool
-main: pro.eugw.ToolStats.Main
-version: 3.3
-author: EugeneWhite
+main: pro.eugw.toolstats.Main
+version: 4.0
+author: EugeneWhite(EugW)
 commands:
   toolstats:
     description: Reload

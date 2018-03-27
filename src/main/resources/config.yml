@@ -1,8 +1,6 @@
 settings:
   reload: 'Config reloaded'
   noPerm: 'No permission'
-  autoUpdate: true
-  configVer: 3.3
 killPlayer:
   enabled: true
   lore: '&cKilled players'
