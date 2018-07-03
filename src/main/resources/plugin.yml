@@ -1,12 +1,15 @@
-name: toolstats
+name: ToolStats
 description: Collect stats of using tool
 main: pro.eugw.toolstats.Main
-version: 4.0
+version: 4.1
 author: EugeneWhite(EugW)
 commands:
   toolstats:
     description: Reload
     usage: /toolstats
+#  tsgivereward:
+#    description: Gives reward, needs givereward perm
+#    usage: /tsgivereward {player[Nick]} {type of reward[killMob, killPlayer, break} {reward level[1-3...]}
 permissions:
   toolstats.reload:
     description: Reload permission
@@ -17,3 +20,6 @@ permissions:
   toolstats.upgrade:
     description: Allow upgrade
     default: op
+#  toolstats.givereward:
+#    description: Allow give rewards by command
+#    default: op

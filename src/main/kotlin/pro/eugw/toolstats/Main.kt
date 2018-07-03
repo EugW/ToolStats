@@ -19,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.net.URL
 import java.util.ArrayList
 import javax.net.ssl.HttpsURLConnection
+import kotlin.concurrent.thread
 
 class Main: JavaPlugin(), Listener {
 
@@ -26,8 +27,7 @@ class Main: JavaPlugin(), Listener {
         super.onEnable()
         Bukkit.getPluginManager().registerEvents(this, this)
         saveDefaultConfig()
-        infoc("Version: ${description.version} enabled. Update available: ${description.version != JsonParser().parse((URL("https://api.github.com/repos/EugW/toolstats/releases/latest").openConnection() as HttpsURLConnection).inputStream.reader()).asJsonObject["tag_name"].asString}")
-        saveDefaultConfig()
+        thread(true) { infoc("Version: ${description.version} enabled. Update available: ${description.version != try { JsonParser().parse((URL("https://api.github.com/repos/EugW/toolstats/releases/latest").openConnection() as HttpsURLConnection).inputStream.reader()).asJsonObject["tag_name"].asString } catch (e: Exception) { description.version } }") }
     }
 
     override fun onDisable() {
@@ -35,32 +35,56 @@ class Main: JavaPlugin(), Listener {
         infoc("Disabled")
     }
 
-    override fun onCommand(sender: CommandSender?, command: Command?, label: String?, args: Array<String>?): Boolean {
-        if (command!!.name == "toolstats") {
-            if (sender!!.hasPermission("toolstats.reload")) {
-                reloadConfig()
-                info(config.getString("settings.reload"), sender)
-            } else {
-                info(config.getString("settings.noPerm"), sender)
+    override fun onCommand(sender: CommandSender, command: Command, label: String?, args: Array<String>): Boolean {
+        when (command.name) {
+            "toolstats" -> {
+                if (sender.hasPermission("toolstats.reload")) {
+                    reloadConfig()
+                    info(config.getString("settings.reload"), sender)
+                } else {
+                    info(config.getString("settings.noPerm"), sender)
+                }
+                return true
             }
-            return true
+            /*"tsgivereward" -> {
+                if (sender.hasPermission("toolstats.givereward")) {
+                    if (!server.getPlayerExact(args[0]).isOnline) {
+                        info(config.getString("settings.noPlayer"), sender)
+                        return true
+                    }
+                    when (args[1]) {
+                        "killPlayer" -> {
+
+                        }
+                        "killMob" -> {
+
+                        }
+                        "break" -> {
+
+                        }
+                        else -> {
+                            info(config.getString("settings.noType"), sender)
+                            return true
+                        }
+                    }
+                }
+            }*/
         }
         return super.onCommand(sender, command, label, args)
     }
 
     @EventHandler
     internal fun onBreak(event: BlockBreakEvent) {
-        if (!config.getBoolean("break.enabled")) {
+        if (!config.getBoolean("break.enabled"))
             return
-        }
         val player = event.player
-        if (!player.hasPermission("toolstats.counter")) {
+        if (!player.hasPermission("toolstats.counter"))
             return
-        }
+        if (player.world.name !in config.getStringList("break.worlds"))
+            return
         val itemStack = player.inventory.itemInMainHand
-        if (!config.getList("break.tools").contains(itemStack.type.toString())) {
+        if (itemStack.type.toString() !in config.getStringList("break.tools"))
             return
-        }
         val itemMeta = itemStack.itemMeta
         val lore = ArrayList<String>()
         if (itemMeta.lore == null) {
@@ -90,23 +114,20 @@ class Main: JavaPlugin(), Listener {
 
     @EventHandler
     fun onKillPlayer(event: EntityDeathEvent) {
-        if (event.entity !is Player) {
+        if (event.entity !is Player)
             return
-        }
-        if (!config.getBoolean("killPlayer.enabled")) {
+        if (!config.getBoolean("killPlayer.enabled"))
             return
-        }
-        if (event.entity.killer == null || event.entity.killer !is Player) {
+        if (event.entity.killer == null || event.entity.killer !is Player)
             return
-        }
         val player = event.entity.killer
-        if (!player.hasPermission("toolstats.counter")) {
+        if (!player.hasPermission("toolstats.counter"))
             return
-        }
+        if (player.world.name !in config.getStringList("killPlayer.worlds"))
+            return
         val itemStack = player.inventory.itemInMainHand
-        if (!config.getList("killPlayer.tools").contains(itemStack.type.toString())) {
+        if (itemStack.type.toString() !in config.getList("killPlayer.tools"))
             return
-        }
         val itemMeta = itemStack.itemMeta
         val lore = ArrayList<String>()
         if (itemMeta.lore == null) {
@@ -140,23 +161,20 @@ class Main: JavaPlugin(), Listener {
 
     @EventHandler
     fun onKillMob(event: EntityDeathEvent) {
-        if (event.entity is Player) {
+        if (event.entity is Player)
             return
-        }
-        if (!config.getBoolean("killMob.enabled")) {
+        if (!config.getBoolean("killMob.enabled"))
             return
-        }
-        if (event.entity.killer == null || event.entity.killer !is Player) {
+        if (event.entity.killer == null || event.entity.killer !is Player)
             return
-        }
         val player = event.entity.killer
-        if (!player.hasPermission("toolstats.counter")) {
+        if (!player.hasPermission("toolstats.counter"))
             return
-        }
+        if (player.world.name !in config.getStringList("killMob.worlds"))
+            return
         val itemStack = player.inventory.itemInMainHand
-        if (!config.getList("killMob.tools").contains(itemStack.type.toString())) {
+        if (itemStack.type.toString() !in config.getList("killMob.tools"))
             return
-        }
         val itemMeta = itemStack.itemMeta
         val lore = ArrayList<String>()
         if (itemMeta.lore == null) {

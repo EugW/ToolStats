@@ -47,6 +47,8 @@ killPlayer:
     sound2:
       enabled: true
       sound: BLOCK_ANVIL_USE
+  worlds:
+      - world
 killMob:
   enabled: true
   lore: '&cKilled mobs'
@@ -91,6 +93,8 @@ killMob:
     sound2:
       enabled: true
       sound: BLOCK_ANVIL_USE
+  worlds:
+      - world
 break:
   enabled: true
   lore: '&aDestroyed blocks'
@@ -145,3 +149,5 @@ break:
     sound2:
       enabled: true
       sound: BLOCK_ANVIL_USE
+  worlds:
+      - world
