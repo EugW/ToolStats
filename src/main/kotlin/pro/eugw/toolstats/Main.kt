@@ -2,24 +2,22 @@ package pro.eugw.toolstats
 
 import com.google.gson.JsonParser
 import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.plugin.java.JavaPlugin
+import pro.eugw.toolstats.nms.*
 import java.net.URL
-import java.util.ArrayList
 import javax.net.ssl.HttpsURLConnection
 import kotlin.concurrent.thread
+
+fun main(args: Array<String>) {
+    Main()
+}
 
 class Main: JavaPlugin(), Listener {
 
@@ -27,7 +25,13 @@ class Main: JavaPlugin(), Listener {
         super.onEnable()
         Bukkit.getPluginManager().registerEvents(this, this)
         saveDefaultConfig()
-        thread(true) { infoc("Version: ${description.version} enabled. Update available: ${description.version != try { JsonParser().parse((URL("https://api.github.com/repos/EugW/toolstats/releases/latest").openConnection() as HttpsURLConnection).inputStream.reader()).asJsonObject["tag_name"].asString } catch (e: Exception) { description.version } }") }
+        thread(true) {
+            infoc("Version: ${description.version} enabled. Update available: ${description.version != try {
+                JsonParser().parse((URL("https://api.github.com/repos/EugW/toolstats/releases/latest").openConnection() as HttpsURLConnection).inputStream.reader()).asJsonObject["tag_name"].asString
+            } catch (e: Exception) {
+                description.version
+            }}")
+        }
     }
 
     override fun onDisable() {
@@ -46,35 +50,26 @@ class Main: JavaPlugin(), Listener {
                 }
                 return true
             }
-            /*"tsgivereward" -> {
-                if (sender.hasPermission("toolstats.givereward")) {
-                    if (!server.getPlayerExact(args[0]).isOnline) {
-                        info(config.getString("settings.noPlayer"), sender)
+            "tstracking" -> {
+                if (sender.hasPermission("toolstats.tstracking")) {
+                    if (sender !is Player)
                         return true
-                    }
-                    when (args[1]) {
-                        "killPlayer" -> {
-
+                    if (args.isNotEmpty())
+                        when (args[0]) {
+                            "start" -> toggleTracking(sender.player, true)
+                            "stop" -> toggleTracking(sender.player, false)
                         }
-                        "killMob" -> {
-
-                        }
-                        "break" -> {
-
-                        }
-                        else -> {
-                            info(config.getString("settings.noType"), sender)
-                            return true
-                        }
-                    }
+                } else {
+                    info(config.getString("settings.noPerm"), sender)
                 }
-            }*/
+                return true
+            }
         }
         return super.onCommand(sender, command, label, args)
     }
 
     @EventHandler
-    internal fun onBreak(event: BlockBreakEvent) {
+    fun onBreak(event: BlockBreakEvent) {
         if (!config.getBoolean("break.enabled"))
             return
         val player = event.player
@@ -82,34 +77,7 @@ class Main: JavaPlugin(), Listener {
             return
         if (player.world.name !in config.getStringList("break.worlds"))
             return
-        val itemStack = player.inventory.itemInMainHand
-        if (itemStack.type.toString() !in config.getStringList("break.tools"))
-            return
-        val itemMeta = itemStack.itemMeta
-        val lore = ArrayList<String>()
-        if (itemMeta.lore == null) {
-            lore.add(config.getString("break.lore").replace("&", "\u00a7") + ": 0")
-            itemMeta.lore = lore
-            itemStack.itemMeta = itemMeta
-            lore.clear()
-        } else if (!itemMeta.lore.toString().contains(config.getString("break.lore").replace("&", "\u00a7"))) {
-            lore.addAll(itemMeta.lore)
-            lore.add(config.getString("break.lore").replace("&", "\u00a7") + ": 0")
-            itemMeta.lore = lore
-            itemStack.itemMeta = itemMeta
-            lore.clear()
-        }
-        lore.addAll(itemMeta.lore)
-        for (pre in lore) {
-            if (pre.contains(config.getString("break.lore").replace("&", "\u00a7"))) {
-                var cnt = Integer.valueOf(pre.replace("[\\D]".toRegex(), ""))
-                cnt++
-                b(cnt, itemMeta, player, config)
-                lore[lore.indexOf(pre)] = config.getString("break.lore").replace("&", "\u00a7") + ": " + cnt
-            }
-        }
-        itemMeta.lore = lore
-        itemStack.itemMeta = itemMeta
+        nmsInvoke(player, "break")
     }
 
     @EventHandler
@@ -125,38 +93,7 @@ class Main: JavaPlugin(), Listener {
             return
         if (player.world.name !in config.getStringList("killPlayer.worlds"))
             return
-        val itemStack = player.inventory.itemInMainHand
-        if (itemStack.type.toString() !in config.getList("killPlayer.tools"))
-            return
-        val itemMeta = itemStack.itemMeta
-        val lore = ArrayList<String>()
-        if (itemMeta.lore == null) {
-            if (config.getBoolean("killPlayer.enabled")) {
-                lore.add(config.getString("killPlayer.lore").replace("&", "\u00a7") + ": 0")
-            }
-            itemMeta.lore = lore
-            itemStack.itemMeta = itemMeta
-            lore.clear()
-        } else if (!itemMeta.lore.toString().contains(config.getString("killPlayer.lore").replace("&", "\u00a7"))) {
-            lore.addAll(itemMeta.lore)
-            if (config.getBoolean("killPlayer.enabled")) {
-                lore.add(config.getString("killPlayer.lore").replace("&", "\u00a7") + ": 0")
-            }
-            itemMeta.lore = lore
-            itemStack.itemMeta = itemMeta
-            lore.clear()
-        }
-        lore.addAll(itemMeta.lore)
-        for (pre in lore) {
-            if (pre.contains(config.getString("killPlayer.lore").replace("&", "\u00a7"))) {
-                var cnt = Integer.valueOf(pre.replace("[\\D]".toRegex(), ""))
-                cnt++
-                kp(cnt, itemMeta, player, config)
-                lore[lore.indexOf(pre)] = config.getString("killPlayer.lore").replace("&", "\u00a7") + ": " + cnt
-            }
-        }
-        itemMeta.lore = lore
-        itemStack.itemMeta = itemMeta
+        nmsInvoke(player, "killPlayer")
     }
 
     @EventHandler
@@ -172,121 +109,34 @@ class Main: JavaPlugin(), Listener {
             return
         if (player.world.name !in config.getStringList("killMob.worlds"))
             return
-        val itemStack = player.inventory.itemInMainHand
-        if (itemStack.type.toString() !in config.getList("killMob.tools"))
+        nmsInvoke(player, "killMob")
+    }
+
+    private fun nmsInvoke(player: Player, type: String) {
+        val itemStackOrigin = player.inventory.itemInMainHand
+        if (itemStackOrigin.type.toString() !in config.getStringList("$type.tools"))
             return
-        val itemMeta = itemStack.itemMeta
-        val lore = ArrayList<String>()
-        if (itemMeta.lore == null) {
-            if (config.getBoolean("killMob.enabled")) {
-                lore.add(config.getString("killMob.lore").replace("&", "\u00a7") + ": 0")
-            }
-            itemMeta.lore = lore
-            itemStack.itemMeta = itemMeta
-            lore.clear()
-        } else if (!itemMeta.lore.toString().contains(config.getString("killMob.lore").replace("&", "\u00a7"))) {
-            lore.addAll(itemMeta.lore)
-            if (config.getBoolean("killMob.enabled")) {
-                lore.add(config.getString("killMob.lore").replace("&", "\u00a7") + ": 0")
-            }
-            itemMeta.lore = lore
-            itemStack.itemMeta = itemMeta
-            lore.clear()
-        }
-        lore.addAll(itemMeta.lore)
-        for (pre in lore) {
-            if (pre.contains(config.getString("killMob.lore").replace("&", "\u00a7"))) {
-                var cnt = Integer.valueOf(pre.replace("[\\D]".toRegex(), ""))
-                cnt++
-                km(cnt, itemMeta, player, config)
-                lore[lore.indexOf(pre)] = config.getString("killMob.lore").replace("&", "\u00a7") + ": " + cnt
-            }
-        }
-        itemMeta.lore = lore
-        itemStack.itemMeta = itemMeta
-    }
-
-    private fun b(count: Int?, itemMeta: ItemMeta, player: Player, fileConfiguration: FileConfiguration) {
-        for (i in 1..fileConfiguration.getString("break.reward.count").split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().size) {
-            if (fileConfiguration.getBoolean("break.reward.enabled") && count == Integer.valueOf(fileConfiguration.getString("break.reward.count").split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[i - 1]) && player.hasPermission("toolstats.upgrade")) {
-                if (fileConfiguration.getBoolean("break.reward.enchant$i.enabled")) {
-                    for (pre in fileConfiguration.getList("break.reward.enchant$i.ench")) {
-                        val ench = pre.toString().split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                        if (Integer.valueOf(ench[1]) > itemMeta.getEnchantLevel(Enchantment.getByName(ench[0]))) {
-                            itemMeta.addEnchant(Enchantment.getByName(ench[0]), Integer.valueOf(ench[1]), true)
-                        }
-                    }
-                    if (fileConfiguration.getBoolean("break.reward.exp$i.enabled")) {
-                        player.giveExp(fileConfiguration.getInt("break.reward.exp$i.lvl"))
-                    }
-                    if (fileConfiguration.getBoolean("break.reward.items$i.enabled")) {
-                        for (pre in fileConfiguration.getList("break.reward.items$i.give")) {
-                            val item = pre.toString().split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                            player.inventory.addItem(ItemStack(Material.getMaterial(item[0]), Integer.valueOf(item[1])))
-                        }
-                    }
-                    if (fileConfiguration.getBoolean("break.reward.sound$i.enabled")) {
-                        player.playSound(player.location, Sound.valueOf(fileConfiguration.getString("break.reward.sound$i.sound")), 1f, 1f)
-                    }
-                }
-            }
+        when (Bukkit.getBukkitVersion()) {
+            "1.9-R0.1-SNAPSHOT", "1.9.2-R0.1-SNAPSHOT" -> MC19R1(itemStackOrigin, config, player, type, server).calculate()
+            "1.9.4-R0.1-SNAPSHOT" -> MC19R2(itemStackOrigin, config, player, type, server).calculate()
+            "1.10.2-R0.1-SNAPSHOT" -> MC110R1(itemStackOrigin, config, player, type, server).calculate()
+            "1.11-R0.1-SNAPSHOT", "1.11.2-R0.1-SNAPSHOT" -> MC111R1(itemStackOrigin, config, player, type, server).calculate()
+            "1.12-R0.1-SNAPSHOT", "1.12.1-R0.1-SNAPSHOT", "1.12.2-R0.1-SNAPSHOT" -> MC112R1(itemStackOrigin, config, player, type, server).calculate()
+            else -> infoc("Oops, non-supported version of the server. If it seems to you that this error please report to the topic on SpigotMC")
         }
     }
 
-    private fun kp(count: Int?, itemMeta: ItemMeta, player: Player, fileConfiguration: FileConfiguration) {
-        for (i in 1..fileConfiguration.getString("killPlayer.reward.count").split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().size) {
-            if (fileConfiguration.getBoolean("killPlayer.reward.enabled") && count == Integer.valueOf(fileConfiguration.getString("killPlayer.reward.count").split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[i - 1]) && player.hasPermission("toolstats.upgrade")) {
-                if (fileConfiguration.getBoolean("killPlayer.reward.enchant$i.enabled")) {
-                    for (pre in fileConfiguration.getList("killPlayer.reward.enchant$i.ench")) {
-                        val ench = pre.toString().split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                        if (Integer.valueOf(ench[1]) > itemMeta.getEnchantLevel(Enchantment.getByName(ench[0]))) {
-                            itemMeta.addEnchant(Enchantment.getByName(ench[0]), Integer.valueOf(ench[1]), true)
-                        }
-                    }
-                }
-                if (fileConfiguration.getBoolean("killPlayer.reward.exp$i.enabled")) {
-                    player.giveExp(fileConfiguration.getInt("killPlayer.reward.exp$i.lvl"))
-                }
-                if (fileConfiguration.getBoolean("killPlayer.reward.items$i.enabled")) {
-                    for (pre in fileConfiguration.getList("killPlayer.reward.items$i.give")) {
-                        val item = pre.toString().split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                        player.inventory.addItem(ItemStack(Material.getMaterial(item[0]), Integer.valueOf(item[1])))
-                    }
-                }
-                if (fileConfiguration.getBoolean("killPlayer.reward.sound$i.enabled")) {
-                    player.playSound(player.location, Sound.valueOf(fileConfiguration.getString("killPlayer.reward.sound$i.sound")), 1f, 1f)
-                }
-
-            }
+    private fun toggleTracking(player: Player, status: Boolean) {
+        val itemStackOrigin = player.inventory.itemInMainHand
+        when (Bukkit.getBukkitVersion()) {
+            "1.9-R0.1-SNAPSHOT", "1.9.2-R0.1-SNAPSHOT" -> MC19R1(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
+            "1.9.4-R0.1-SNAPSHOT" -> MC19R2(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
+            "1.10.2-R0.1-SNAPSHOT" -> MC110R1(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
+            "1.11-R0.1-SNAPSHOT", "1.11.2-R0.1-SNAPSHOT" -> MC111R1(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
+            "1.12-R0.1-SNAPSHOT", "1.12.1-R0.1-SNAPSHOT", "1.12.2-R0.1-SNAPSHOT" -> MC112R1(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
+            else -> infoc("Oops, non-supported version of the server. If it seems to you that this error please report to the topic on SpigotMC")
         }
-
-    }
-
-    private fun km(count: Int?, itemMeta: ItemMeta, player: Player, fileConfiguration: FileConfiguration) {
-        for (i in 1..fileConfiguration.getString("killMob.reward.count").split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().size) {
-            if (fileConfiguration.getBoolean("killMob.reward.enabled") && count == Integer.valueOf(fileConfiguration.getString("killMob.reward.count").split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[i - 1]) && player.hasPermission("toolstats.upgrade")) {
-                if (fileConfiguration.getBoolean("killMob.reward.enchant$i.enabled")) {
-                    for (pre in fileConfiguration.getList("killMob.reward.enchant$i.ench")) {
-                        val ench = pre.toString().split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                        if (Integer.valueOf(ench[1]) > itemMeta.getEnchantLevel(Enchantment.getByName(ench[0]))) {
-                            itemMeta.addEnchant(Enchantment.getByName(ench[0]), Integer.valueOf(ench[1]), true)
-                        }
-                    }
-                }
-                if (fileConfiguration.getBoolean("killMob.reward.exp$i.enabled")) {
-                    player.giveExp(fileConfiguration.getInt("killMob.reward.exp$i.lvl"))
-                }
-                if (fileConfiguration.getBoolean("killMob.reward.items$i.enabled")) {
-                    for (pre in fileConfiguration.getList("killMob.reward.items$i.give")) {
-                        val item = pre.toString().split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                        player.inventory.addItem(ItemStack(Material.getMaterial(item[0]), Integer.valueOf(item[1])))
-                    }
-                }
-                if (fileConfiguration.getBoolean("killMob.reward.sound$i.enabled")) {
-                    player.playSound(player.location, Sound.valueOf(fileConfiguration.getString("killMob.reward.sound$i.sound")), 1f, 1f)
-                }
-            }
-        }
+        info(config.getString("settings.trackSwitch"), player)
     }
 
     private fun info(msg: String, sender: CommandSender) {
