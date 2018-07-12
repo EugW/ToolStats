@@ -1,17 +1,17 @@
 package pro.eugw.toolstats.nms
 
-import net.minecraft.server.v1_10_R1.NBTTagCompound
-import net.minecraft.server.v1_10_R1.NBTTagList
-import net.minecraft.server.v1_10_R1.NBTTagString
+import net.minecraft.server.v1_8_R3.NBTTagCompound
+import net.minecraft.server.v1_8_R3.NBTTagList
+import net.minecraft.server.v1_8_R3.NBTTagString
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Server
 import org.bukkit.Sound
 import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack
 import org.bukkit.entity.Player
 
-class MC110R1(private val config: FileConfiguration, private val player: Player, private val type: String, private val server: Server) {
+class MC18R3(private val config: FileConfiguration, private val player: Player, private val type: String, private val server: Server) {
 
     fun calculate() {
         val enchantments = mapOf(
@@ -46,7 +46,7 @@ class MC110R1(private val config: FileConfiguration, private val player: Player,
                 Pair("MENDING", 70),
                 Pair("VANISHING_CURSE", 71)
         )
-        val itemStackOrigin = player.inventory.itemInMainHand
+        val itemStackOrigin = player.inventory.itemInHand
         if (itemStackOrigin.type.toString() !in config.getStringList("$type.tools"))
             return
         val itemStackNMS = CraftItemStack.asNMSCopy(itemStackOrigin)
@@ -132,15 +132,15 @@ class MC110R1(private val config: FileConfiguration, private val player: Player,
         comp.set("Lore", lore)
         itemStackNMS.tag!!.set("display", comp)
         itemStackNMS.tag!!.setInt("pro.eugw.toolstats.$type", count)
-        player.inventory.itemInMainHand = CraftItemStack.asCraftMirror(itemStackNMS)
+        player.inventory.itemInHand = CraftItemStack.asCraftMirror(itemStackNMS)
     }
 
     fun setTrackingStatus(status: Boolean) {
-        val itemStackNMS = CraftItemStack.asNMSCopy(player.inventory.itemInMainHand)
+        val itemStackNMS = CraftItemStack.asNMSCopy(player.inventory.itemInHand)
         if (itemStackNMS.tag == null)
             itemStackNMS.tag = NBTTagCompound()
         itemStackNMS.tag!!.setBoolean("pro.eugw.toolstats.tracking", status)
-        player.inventory.itemInMainHand = CraftItemStack.asCraftMirror(itemStackNMS)
+        player.inventory.itemInHand = CraftItemStack.asCraftMirror(itemStackNMS)
     }
 
     private fun NBTTagList.indexOf(s: String): Int {

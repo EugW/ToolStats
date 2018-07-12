@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack
 import org.bukkit.entity.Player
 
-class MC19R2(private val itemStackOrigin: org.bukkit.inventory.ItemStack, private val config: FileConfiguration, private val player: Player, private val type: String, private val server: Server) {
+class MC19R2(private val config: FileConfiguration, private val player: Player, private val type: String, private val server: Server) {
 
     fun calculate() {
         val enchantments = mapOf(
@@ -46,6 +46,9 @@ class MC19R2(private val itemStackOrigin: org.bukkit.inventory.ItemStack, privat
                 Pair("MENDING", 70),
                 Pair("VANISHING_CURSE", 71)
         )
+        val itemStackOrigin = player.inventory.itemInMainHand
+        if (itemStackOrigin.type.toString() !in config.getStringList("$type.tools"))
+            return
         val itemStackNMS = CraftItemStack.asNMSCopy(itemStackOrigin)
         if (itemStackNMS.tag == null)
             itemStackNMS.tag = NBTTagCompound()
@@ -129,15 +132,15 @@ class MC19R2(private val itemStackOrigin: org.bukkit.inventory.ItemStack, privat
         comp.set("Lore", lore)
         itemStackNMS.tag!!.set("display", comp)
         itemStackNMS.tag!!.setInt("pro.eugw.toolstats.$type", count)
-        player.inventory.itemInMainHand = CraftItemStack.asBukkitCopy(itemStackNMS)
+        player.inventory.itemInMainHand = CraftItemStack.asCraftMirror(itemStackNMS)
     }
 
     fun setTrackingStatus(status: Boolean) {
-        val itemStackNMS = CraftItemStack.asNMSCopy(itemStackOrigin)
+        val itemStackNMS = CraftItemStack.asNMSCopy(player.inventory.itemInMainHand)
         if (itemStackNMS.tag == null)
             itemStackNMS.tag = NBTTagCompound()
         itemStackNMS.tag!!.setBoolean("pro.eugw.toolstats.tracking", status)
-        player.inventory.itemInMainHand = CraftItemStack.asBukkitCopy(itemStackNMS)
+        player.inventory.itemInMainHand = CraftItemStack.asCraftMirror(itemStackNMS)
     }
 
     private fun NBTTagList.indexOf(s: String): Int {

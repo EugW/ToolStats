@@ -113,28 +113,37 @@ class Main: JavaPlugin(), Listener {
     }
 
     private fun nmsInvoke(player: Player, type: String) {
-        val itemStackOrigin = player.inventory.itemInMainHand
-        if (itemStackOrigin.type.toString() !in config.getStringList("$type.tools"))
-            return
         when (Bukkit.getBukkitVersion()) {
-            "1.9-R0.1-SNAPSHOT", "1.9.2-R0.1-SNAPSHOT" -> MC19R1(itemStackOrigin, config, player, type, server).calculate()
-            "1.9.4-R0.1-SNAPSHOT" -> MC19R2(itemStackOrigin, config, player, type, server).calculate()
-            "1.10.2-R0.1-SNAPSHOT" -> MC110R1(itemStackOrigin, config, player, type, server).calculate()
-            "1.11-R0.1-SNAPSHOT", "1.11.2-R0.1-SNAPSHOT" -> MC111R1(itemStackOrigin, config, player, type, server).calculate()
-            "1.12-R0.1-SNAPSHOT", "1.12.1-R0.1-SNAPSHOT", "1.12.2-R0.1-SNAPSHOT" -> MC112R1(itemStackOrigin, config, player, type, server).calculate()
+            //"1.7.2-R0.4-SNAPSHOT" -> MC17R1(config, player, type, server).calculate()
+            //"1.7.5-R0.1-SNAPSHOT" -> MC17R2(config, player, type, server).calculate()
+            //"1.7.8-R0.1-SNAPSHOT", "1.7.9-R0.2-SNAPSHOT" -> MC17R3(config, player, type, server).calculate()
+            //"1.7.10-R0.1-SNAPSHOT" -> MC17R4(config, player, type, server).calculate()
+            "1.8-R0.1-SNAPSHOT" -> MC18R1(config, player, type, server).calculate()
+            "1.8.3-R0.1-SNAPSHOT" -> MC18R2(config, player, type, server).calculate()
+            "1.8.8-R0.1-SNAPSHOT" -> MC18R3(config, player, type, server).calculate()
+            "1.9-R0.1-SNAPSHOT", "1.9.2-R0.1-SNAPSHOT" -> MC19R1(config, player, type, server).calculate()
+            "1.9.4-R0.1-SNAPSHOT" -> MC19R2(config, player, type, server).calculate()
+            "1.10.2-R0.1-SNAPSHOT" -> MC110R1(config, player, type, server).calculate()
+            "1.11-R0.1-SNAPSHOT", "1.11.2-R0.1-SNAPSHOT" -> MC111R1(config, player, type, server).calculate()
+            "1.12-R0.1-SNAPSHOT", "1.12.1-R0.1-SNAPSHOT", "1.12.2-R0.1-SNAPSHOT" -> MC112R1(config, player, type, server).calculate()
             else -> infoc("Oops, non-supported version of the server. If it seems to you that this error please report to the topic on SpigotMC")
         }
     }
 
     private fun toggleTracking(player: Player, status: Boolean) {
-        val itemStackOrigin = player.inventory.itemInMainHand
         when (Bukkit.getBukkitVersion()) {
-            "1.9-R0.1-SNAPSHOT", "1.9.2-R0.1-SNAPSHOT" -> MC19R1(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
-            "1.9.4-R0.1-SNAPSHOT" -> MC19R2(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
-            "1.10.2-R0.1-SNAPSHOT" -> MC110R1(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
-            "1.11-R0.1-SNAPSHOT", "1.11.2-R0.1-SNAPSHOT" -> MC111R1(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
-            "1.12-R0.1-SNAPSHOT", "1.12.1-R0.1-SNAPSHOT", "1.12.2-R0.1-SNAPSHOT" -> MC112R1(itemStackOrigin, config, player, "", server).setTrackingStatus(status)
-            else -> infoc("Oops, non-supported version of the server. If it seems to you that this error please report to the topic on SpigotMC")
+            "1.8-R0.1-SNAPSHOT" -> MC18R1(config, player, "", server).setTrackingStatus(status)
+            "1.8.3-R0.1-SNAPSHOT" -> MC18R2(config, player, "", server).setTrackingStatus(status)
+            "1.8.8-R0.1-SNAPSHOT" -> MC18R3(config, player, "", server).setTrackingStatus(status)
+            "1.9-R0.1-SNAPSHOT", "1.9.2-R0.1-SNAPSHOT" -> MC19R1(config, player, "", server).setTrackingStatus(status)
+            "1.9.4-R0.1-SNAPSHOT" -> MC19R2(config, player, "", server).setTrackingStatus(status)
+            "1.10.2-R0.1-SNAPSHOT" -> MC110R1(config, player, "", server).setTrackingStatus(status)
+            "1.11-R0.1-SNAPSHOT", "1.11.2-R0.1-SNAPSHOT" -> MC111R1(config, player, "", server).setTrackingStatus(status)
+            "1.12-R0.1-SNAPSHOT", "1.12.1-R0.1-SNAPSHOT", "1.12.2-R0.1-SNAPSHOT" -> MC112R1(config, player, "", server).setTrackingStatus(status)
+            else -> {
+                infoc("Oops, non-supported version of the server. If it seems to you that this error please report to the topic on SpigotMC")
+                return
+            }
         }
         info(config.getString("settings.trackSwitch"), player)
     }

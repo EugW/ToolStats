@@ -1,17 +1,19 @@
 package pro.eugw.toolstats.nms
 
-import net.minecraft.server.v1_10_R1.NBTTagCompound
-import net.minecraft.server.v1_10_R1.NBTTagList
-import net.minecraft.server.v1_10_R1.NBTTagString
+import net.minecraft.server.v1_7_R1.NBTBase
+import net.minecraft.server.v1_7_R1.NBTTagCompound
+import net.minecraft.server.v1_7_R1.NBTTagList
+import net.minecraft.server.v1_7_R1.NBTTagString
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Server
 import org.bukkit.Sound
 import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_7_R1.inventory.CraftItemStack
 import org.bukkit.entity.Player
 
-class MC110R1(private val config: FileConfiguration, private val player: Player, private val type: String, private val server: Server) {
+@Suppress("DEPRECATION")
+class MC17R1(private val config: FileConfiguration, private val player: Player, private val type: String, private val server: Server) {
 
     fun calculate() {
         val enchantments = mapOf(
@@ -46,16 +48,19 @@ class MC110R1(private val config: FileConfiguration, private val player: Player,
                 Pair("MENDING", 70),
                 Pair("VANISHING_CURSE", 71)
         )
-        val itemStackOrigin = player.inventory.itemInMainHand
+        val itemStackOrigin = player.inventory.itemInHand
         if (itemStackOrigin.type.toString() !in config.getStringList("$type.tools"))
             return
         val itemStackNMS = CraftItemStack.asNMSCopy(itemStackOrigin)
-        if (itemStackNMS.tag == null)
+        if (itemStackNMS.tag == null) {
             itemStackNMS.tag = NBTTagCompound()
+            println("123")
+        }
+        println(itemStackNMS.tag.toString())
         val tracking = if (itemStackNMS.tag!!.hasKey("pro.eugw.toolstats.tracking")) itemStackNMS.tag!!.getBoolean("pro.eugw.toolstats.tracking") else config.getBoolean("$type.autoStartTracking")
         if (!tracking)
             return
-        val lore = itemStackNMS.tag!!.getCompound("display").getList("Lore", 8)
+        var lore = itemStackNMS.tag!!.getCompound("display").getList("Lore", 8)
         var string = ""
         config.getString("$type.lore").replace("&", "\u00a7").split("%count%").dropLastWhile { it.isEmpty() }.forEach {
             string += "\\Q$it\\E.*\\d+.*"
@@ -81,7 +86,7 @@ class MC110R1(private val config: FileConfiguration, private val player: Player,
                 if (config.getBoolean("$type.reward.enchant$i.enabled")) {
                     for (pre in config.getStringList("$type.reward.enchant$i.ench")) {
                         val ench = pre.split(":")
-                        val list = try {
+                        var list = try {
                             itemStackNMS.tag!!.getList("ench", 10)
                         } catch (e: Exception) {
                             itemStackNMS.tag!!.set("ench", NBTTagList())
@@ -99,7 +104,7 @@ class MC110R1(private val config: FileConfiguration, private val player: Player,
                         if (ench[1].toInt() > (itemEnchantment?.getInt("lvl") ?: -1)) {
                             if (itemEnchantment != null) {
                                 itemEnchantment.setInt("lvl", ench[1].toInt())
-                                list.a(indexEnchantment, itemEnchantment)
+                                list = list.a(indexEnchantment, itemEnchantment)
                             } else if (enchantments.containsKey(ench[0])) {
                                 val eeeCompound = NBTTagCompound()
                                 eeeCompound.setInt("id", enchantments[ench[0]]!!)
@@ -127,29 +132,40 @@ class MC110R1(private val config: FileConfiguration, private val player: Player,
                 }
             }
         }
-        lore.a(index, NBTTagString(config.getString("$type.lore").replace("&", "\u00a7").replace("%count%", "$count")))
+        lore = lore.a(index, NBTTagString(config.getString("$type.lore").replace("&", "\u00a7").replace("%count%", "$count")))
         val comp = NBTTagCompound()
         comp.set("Lore", lore)
         itemStackNMS.tag!!.set("display", comp)
         itemStackNMS.tag!!.setInt("pro.eugw.toolstats.$type", count)
-        player.inventory.itemInMainHand = CraftItemStack.asCraftMirror(itemStackNMS)
+        player.inventory.itemInHand = CraftItemStack.asCraftMirror(itemStackNMS)
     }
 
     fun setTrackingStatus(status: Boolean) {
-        val itemStackNMS = CraftItemStack.asNMSCopy(player.inventory.itemInMainHand)
+        val itemStackNMS = CraftItemStack.asNMSCopy(player.inventory.itemInHand)
         if (itemStackNMS.tag == null)
             itemStackNMS.tag = NBTTagCompound()
         itemStackNMS.tag!!.setBoolean("pro.eugw.toolstats.tracking", status)
-        player.inventory.itemInMainHand = CraftItemStack.asCraftMirror(itemStackNMS)
+        player.inventory.itemInHand = CraftItemStack.asCraftMirror(itemStackNMS)
     }
 
     private fun NBTTagList.indexOf(s: String): Int {
-        for (i in 0 until size()) if (getString(i) == s) return i
+        for (i in 0 until size()) if (f(i) == s) return i
         return -1
     }
 
     private fun NBTTagList.find(predicate: (String) -> Boolean): String? {
-        for (i in 0 until size()) if (predicate(getString(i))) return getString(i)
+        for (i in 0 until size()) if (predicate(f(i))) return f(i)
         return null
+    }
+
+    private fun NBTTagList.a(index: Int, base: NBTBase): NBTTagList {
+        val new = NBTTagList()
+        for (i in 0 until size()) {
+            if (i == index)
+                new.add(base)
+            else
+                new.add(get(i))
+        }
+        return new
     }
 }

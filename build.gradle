@@ -10,7 +10,7 @@ buildscript {
 }
 
 group 'pro.eugw'
-version '4.2'
+version '4.3'
 
 apply plugin: 'kotlin'
 
@@ -22,6 +22,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile 'com.google.code.gson:gson:2.8.5'
     compileOnly fileTree(dir: "libs", includes: ['*.jar'])
 }
 jar {
