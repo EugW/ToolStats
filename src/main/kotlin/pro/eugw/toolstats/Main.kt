@@ -24,7 +24,6 @@ class Main: JavaPlugin(), Listener {
         super.onEnable()
         Bukkit.getPluginManager().registerEvents(this, this)
         saveDefaultConfig()
-        checkCompatibility()
         thread(true) {
             infoc("Version: ${description.version} enabled. Update available: ${description.version != try {
                 JsonParser().parse((URL("https://api.github.com/repos/EugW/toolstats/releases/latest").openConnection() as HttpsURLConnection).inputStream.reader()).asJsonObject["tag_name"].asString
@@ -127,26 +126,6 @@ class Main: JavaPlugin(), Listener {
 
     private fun infoc(msg: String) {
         Bukkit.getConsoleSender().sendMessage("\u00a77[\u00a7eToolStats\u00a77] $msg")
-    }
-
-    private fun checkCompatibility() {
-        val allowedVersions = arrayListOf(
-                "1.12.2-R0.1-SNAPSHOT",
-                "1.12.1-R0.1-SNAPSHOT",
-                "1.12-R0.1-SNAPSHOT",
-                "1.11.2-R0.1-SNAPSHOT",
-                "1.11-R0.1-SNAPSHOT",
-                "1.10.2-R0.1-SNAPSHOT",
-                "1.9.4-R0.1-SNAPSHOT",
-                "1.9.2-R0.1-SNAPSHOT",
-                "1.9-R0.1-SNAPSHOT",
-                "1.8.8-R0.1-SNAPSHOT",
-                "1.8.3-R0.1-SNAPSHOT",
-                "1.8-R0.1-SNAPSHOT"
-        )
-        if (!allowedVersions.contains(Bukkit.getBukkitVersion())) {
-            infoc("Your version does not support NMS, so universal logic will be used, including version 1.7")
-        }
     }
 
 }
