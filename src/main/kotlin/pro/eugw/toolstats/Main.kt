@@ -10,7 +10,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.plugin.java.JavaPlugin
-import pro.eugw.toolstats.nms.*
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 import kotlin.concurrent.thread
@@ -25,6 +24,7 @@ class Main: JavaPlugin(), Listener {
         super.onEnable()
         Bukkit.getPluginManager().registerEvents(this, this)
         saveDefaultConfig()
+        checkCompatibility()
         thread(true) {
             infoc("Version: ${description.version} enabled. Update available: ${description.version != try {
                 JsonParser().parse((URL("https://api.github.com/repos/EugW/toolstats/releases/latest").openConnection() as HttpsURLConnection).inputStream.reader()).asJsonObject["tag_name"].asString
@@ -113,38 +113,11 @@ class Main: JavaPlugin(), Listener {
     }
 
     private fun nmsInvoke(player: Player, type: String) {
-        when (Bukkit.getBukkitVersion()) {
-            //"1.7.2-R0.4-SNAPSHOT" -> MC17R1(config, player, type, server).calculate()
-            //"1.7.5-R0.1-SNAPSHOT" -> MC17R2(config, player, type, server).calculate()
-            //"1.7.8-R0.1-SNAPSHOT", "1.7.9-R0.2-SNAPSHOT" -> MC17R3(config, player, type, server).calculate()
-            //"1.7.10-R0.1-SNAPSHOT" -> MC17R4(config, player, type, server).calculate()
-            "1.8-R0.1-SNAPSHOT" -> MC18R1(config, player, type, server).calculate()
-            "1.8.3-R0.1-SNAPSHOT" -> MC18R2(config, player, type, server).calculate()
-            "1.8.8-R0.1-SNAPSHOT" -> MC18R3(config, player, type, server).calculate()
-            "1.9-R0.1-SNAPSHOT", "1.9.2-R0.1-SNAPSHOT" -> MC19R1(config, player, type, server).calculate()
-            "1.9.4-R0.1-SNAPSHOT" -> MC19R2(config, player, type, server).calculate()
-            "1.10.2-R0.1-SNAPSHOT" -> MC110R1(config, player, type, server).calculate()
-            "1.11-R0.1-SNAPSHOT", "1.11.2-R0.1-SNAPSHOT" -> MC111R1(config, player, type, server).calculate()
-            "1.12-R0.1-SNAPSHOT", "1.12.1-R0.1-SNAPSHOT", "1.12.2-R0.1-SNAPSHOT" -> MC112R1(config, player, type, server).calculate()
-            else -> infoc("Oops, non-supported version of the server. If it seems to you that this error please report to the topic on SpigotMC")
-        }
+        UniversalLogic(config, player, type, server).calculate()
     }
 
     private fun toggleTracking(player: Player, status: Boolean) {
-        when (Bukkit.getBukkitVersion()) {
-            "1.8-R0.1-SNAPSHOT" -> MC18R1(config, player, "", server).setTrackingStatus(status)
-            "1.8.3-R0.1-SNAPSHOT" -> MC18R2(config, player, "", server).setTrackingStatus(status)
-            "1.8.8-R0.1-SNAPSHOT" -> MC18R3(config, player, "", server).setTrackingStatus(status)
-            "1.9-R0.1-SNAPSHOT", "1.9.2-R0.1-SNAPSHOT" -> MC19R1(config, player, "", server).setTrackingStatus(status)
-            "1.9.4-R0.1-SNAPSHOT" -> MC19R2(config, player, "", server).setTrackingStatus(status)
-            "1.10.2-R0.1-SNAPSHOT" -> MC110R1(config, player, "", server).setTrackingStatus(status)
-            "1.11-R0.1-SNAPSHOT", "1.11.2-R0.1-SNAPSHOT" -> MC111R1(config, player, "", server).setTrackingStatus(status)
-            "1.12-R0.1-SNAPSHOT", "1.12.1-R0.1-SNAPSHOT", "1.12.2-R0.1-SNAPSHOT" -> MC112R1(config, player, "", server).setTrackingStatus(status)
-            else -> {
-                infoc("Oops, non-supported version of the server. If it seems to you that this error please report to the topic on SpigotMC")
-                return
-            }
-        }
+        UniversalLogic(config, player, "", server).setTrackingStatus(status)
         info(config.getString("settings.trackSwitch"), player)
     }
 
@@ -154,6 +127,26 @@ class Main: JavaPlugin(), Listener {
 
     private fun infoc(msg: String) {
         Bukkit.getConsoleSender().sendMessage("\u00a77[\u00a7eToolStats\u00a77] $msg")
+    }
+
+    private fun checkCompatibility() {
+        val allowedVersions = arrayListOf(
+                "1.12.2-R0.1-SNAPSHOT",
+                "1.12.1-R0.1-SNAPSHOT",
+                "1.12-R0.1-SNAPSHOT",
+                "1.11.2-R0.1-SNAPSHOT",
+                "1.11-R0.1-SNAPSHOT",
+                "1.10.2-R0.1-SNAPSHOT",
+                "1.9.4-R0.1-SNAPSHOT",
+                "1.9.2-R0.1-SNAPSHOT",
+                "1.9-R0.1-SNAPSHOT",
+                "1.8.8-R0.1-SNAPSHOT",
+                "1.8.3-R0.1-SNAPSHOT",
+                "1.8-R0.1-SNAPSHOT"
+        )
+        if (!allowedVersions.contains(Bukkit.getBukkitVersion())) {
+            infoc("Your version does not support NMS, so universal logic will be used, including version 1.7")
+        }
     }
 
 }
