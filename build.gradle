@@ -10,7 +10,7 @@ buildscript {
 }
 
 group 'pro.eugw'
-version '4.3'
+version '4.4'
 
 apply plugin: 'kotlin'
 
