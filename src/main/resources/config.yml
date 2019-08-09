@@ -5,7 +5,10 @@ settings:
 killPlayer:
   enabled: true
   autoStartTracking: true
-  lore: '&cKilled players: %count%'
+  trackItemsWCustomNames: true
+  lore:
+    - '&cKilled players: %count%'
+    - '&l&0J&1u&2s&3t &4a&5n&6o&7t&8h&9e&ar &bl&ci&dn&ee&f!'
   tools:
     - DIAMOND_SWORD
     - IRON_SWORD
@@ -60,7 +63,10 @@ killPlayer:
 killMob:
   enabled: true
   autoStartTracking: true
-  lore: '&cKilled mobs: %count%'
+  trackItemsWCustomNames: true
+  lore:
+    - '&cKilled mobs: %count%'
+    - '&l&0J&1u&2s&3t &4a&5n&6o&7t&8h&9e&ar &bl&ci&dn&ee&f!'
   tools:
     - DIAMOND_SWORD
     - IRON_SWORD
@@ -113,7 +119,10 @@ killMob:
 break:
   enabled: true
   autoStartTracking: true
-  lore: '&aDestroyed blocks: %count%'
+  trackItemsWCustomNames: true
+  lore:
+    - '&aDestroyed blocks: %count%'
+    - '&l&0J&1u&2s&3t &4a&5n&6o&7t&8h&9e&ar &bl&ci&dn&ee&f!'
   tools:
     - DIAMOND_PICKAXE
     - DIAMOND_SPADE

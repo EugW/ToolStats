@@ -14,11 +14,13 @@ import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 import kotlin.concurrent.thread
 
-fun main(args: Array<String>) {
+fun main() {
     Main()
 }
 
 class Main: JavaPlugin(), Listener {
+
+    private var uL: UniversalLogic? = null
 
     override fun onEnable() {
         super.onEnable()
@@ -38,14 +40,14 @@ class Main: JavaPlugin(), Listener {
         infoc("Disabled")
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String?, args: Array<String>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         when (command.name) {
             "toolstats" -> {
                 if (sender.hasPermission("toolstats.reload")) {
                     reloadConfig()
-                    info(config.getString("settings.reload"), sender)
+                    info(config.getString("settings.reload")!!, sender)
                 } else {
-                    info(config.getString("settings.noPerm"), sender)
+                    info(config.getString("settings.noPerm")!!, sender)
                 }
                 return true
             }
@@ -55,11 +57,11 @@ class Main: JavaPlugin(), Listener {
                         return true
                     if (args.isNotEmpty())
                         when (args[0]) {
-                            "start" -> toggleTracking(sender.player, true)
-                            "stop" -> toggleTracking(sender.player, false)
+                            "start" -> toggleTracking(sender.player!!, true)
+                            "stop" -> toggleTracking(sender.player!!, false)
                         }
                 } else {
-                    info(config.getString("settings.noPerm"), sender)
+                    info(config.getString("settings.noPerm")!!, sender)
                 }
                 return true
             }
@@ -87,7 +89,7 @@ class Main: JavaPlugin(), Listener {
             return
         if (event.entity.killer == null || event.entity.killer !is Player)
             return
-        val player = event.entity.killer
+        val player = event.entity.killer!!
         if (!player.hasPermission("toolstats.counter"))
             return
         if (player.world.name !in config.getStringList("killPlayer.worlds"))
@@ -103,7 +105,7 @@ class Main: JavaPlugin(), Listener {
             return
         if (event.entity.killer == null || event.entity.killer !is Player)
             return
-        val player = event.entity.killer
+        val player = event.entity.killer!!
         if (!player.hasPermission("toolstats.counter"))
             return
         if (player.world.name !in config.getStringList("killMob.worlds"))
@@ -112,12 +114,16 @@ class Main: JavaPlugin(), Listener {
     }
 
     private fun nmsInvoke(player: Player, type: String) {
-        UniversalLogic(config, player, type, server).calculate()
+        if (uL == null)
+            uL = UniversalLogic()
+        uL?.calculate(config, player, type, server)
     }
 
     private fun toggleTracking(player: Player, status: Boolean) {
-        UniversalLogic(config, player, "", server).setTrackingStatus(status)
-        info(config.getString("settings.trackSwitch"), player)
+        if (uL == null)
+            uL = UniversalLogic()
+        uL?.setTrackingStatus(player, status)
+        info(config.getString("settings.trackSwitch")!!, player)
     }
 
     private fun info(msg: String, sender: CommandSender) {
