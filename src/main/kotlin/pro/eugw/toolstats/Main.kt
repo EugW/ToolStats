@@ -22,7 +22,6 @@ class Main: JavaPlugin(), Listener {
 
     private var uL: UniversalLogic? = null
 
-
     override fun onEnable() {
         super.onEnable()
         Bukkit.getPluginManager().registerEvents(this, this)
