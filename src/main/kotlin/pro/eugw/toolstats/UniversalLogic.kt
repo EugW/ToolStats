@@ -1,33 +1,20 @@
 package pro.eugw.toolstats
 
-import org.bukkit.*
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.Server
+import org.bukkit.Sound
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.PlayerInventory
-import kotlin.reflect.full.staticProperties
 
 class UniversalLogic {
-
-    private var newNMS = true
+    
     private val dividerChar = "§&"
-    private val enchMap = HashMap<String, Enchantment>()
-
-    init {
-        val arr = ArrayList<String>()
-        PlayerInventory::class.members.mapTo(arr, {
-            it.name
-        })
-        newNMS = arr.contains("getItemInMainHand")
-        Enchantment::class.staticProperties.forEach {
-            if (it.returnType.toString().dropLast(1) == Enchantment::class.qualifiedName)
-                enchMap[it.name] = it.call() as Enchantment
-        }
-    }
 
     fun calculate(config: FileConfiguration, player: Player, type: String, server: Server) {
-        @Suppress("DEPRECATION") val itemStack = if (newNMS) player.inventory.itemInMainHand else player.inventory.itemInHand
+        @Suppress("DEPRECATION") val itemStack = player.inventory.itemInHand
         if (itemStack.type.toString() !in config.getStringList("$type.tools"))
             return
         val itemMeta = itemStack.itemMeta!!
@@ -73,8 +60,14 @@ class UniversalLogic {
                 if (config.getBoolean("$type.reward.enchant$i.enabled")) {
                     for (pre in config.getStringList("$type.reward.enchant$i.ench")) {
                         val ench = pre.split(":")
-                        if (ench[1].toInt() > itemMeta.getEnchantLevel(enchMap[ench[0]]!!))
-                            itemMeta.addEnchant(enchMap[ench[0]]!!, ench[1].toInt(), true)
+                        @Suppress("DEPRECATION") val enchantment = Enchantment.getByName(ench[0])!!
+                        if (ench[1].toInt() > itemMeta.getEnchantLevel(enchantment))
+                            if (config.getBoolean("$type.reward.enchant$i.applyOnlyCompatible")) {
+                                if (enchantment.canEnchantItem(itemStack))
+                                    itemMeta.addEnchant(enchantment, ench[1].toInt(), true)
+                            } else {
+                                itemMeta.addEnchant(enchantment, ench[1].toInt(), true)
+                            }
                     }
                 }
                 if (config.getBoolean("$type.reward.exp$i.enabled")) {
@@ -112,11 +105,11 @@ class UniversalLogic {
         }
         itemMeta.lore = lore
         itemStack.itemMeta = itemMeta
-        @Suppress("DEPRECATION") if (newNMS) player.inventory.setItemInMainHand(itemStack) else player.inventory.setItemInHand(itemStack)
+        @Suppress("DEPRECATION") player.inventory.setItemInHand(itemStack)
     }
 
     fun setTrackingStatus(player: Player, status: Boolean) {
-        @Suppress("DEPRECATION") val itemStack = if (newNMS) player.inventory.itemInMainHand else player.inventory.itemInHand
+        @Suppress("DEPRECATION") val itemStack = player.inventory.itemInHand
         val itemMeta = itemStack.itemMeta!!
         val lore = if (itemMeta.lore == null) ArrayList<String>() else itemMeta.lore!!
         val trackingBool = if (status) '1' else '0'
@@ -141,7 +134,7 @@ class UniversalLogic {
         }
         itemMeta.lore = lore
         itemStack.itemMeta = itemMeta
-        @Suppress("DEPRECATION") if (newNMS) player.inventory.setItemInMainHand(itemStack) else player.inventory.setItemInHand(itemStack)
+        @Suppress("DEPRECATION") player.inventory.setItemInHand(itemStack)
     }
 
     private fun makeHidden(origin: Any): String {

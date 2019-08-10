@@ -20,6 +20,7 @@ killPlayer:
     count: 10,20
     enchant1:
        enabled: true
+       applyOnlyCompatible: true
        ench:
          - DAMAGE_ALL:10
          - DAMAGE_UNDEAD:1
@@ -40,6 +41,7 @@ killPlayer:
       command: 'tell %nickname% good'
     enchant2:
       enabled: true
+      applyOnlyCompatible: true
       ench:
         - DAMAGE_ALL:15
         - DAMAGE_UNDEAD:1
@@ -78,6 +80,7 @@ killMob:
     count: 20,40
     enchant1:
       enabled: true
+      applyOnlyCompatible: true
       ench:
         - DAMAGE_ALL:2
         - KNOCKBACK:3
@@ -97,6 +100,7 @@ killMob:
       command: 'tell %nickname% good'
     enchant2:
       enabled: true
+      applyOnlyCompatible: true
       ench:
         - DAMAGE_ALL:5
         - KNOCKBACK:5
@@ -144,6 +148,7 @@ break:
     count: 30,40
     enchant1:
       enabled: true
+      applyOnlyCompatible: true
       ench:
         - DIG_SPEED:2
         - SILK_TOUCH:1
@@ -163,6 +168,7 @@ break:
       command: 'tell %nickname% good'
     enchant2:
       enabled: true
+      applyOnlyCompatible: true
       ench:
         - DIG_SPEED:5
         - SILK_TOUCH:2
