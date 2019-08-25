@@ -1,7 +1,9 @@
 settings:
+  prefix: '&7[&eToolStats&7]'
   reload: 'Config reloaded'
   noPerm: 'No permission'
   trackSwitch: 'Tracking switched'
+  noArg: 'Enter start|stop argument'
 killPlayer:
   enabled: true
   autoStartTracking: true

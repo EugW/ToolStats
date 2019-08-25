@@ -59,7 +59,10 @@ class Main: JavaPlugin(), Listener {
                         when (args[0]) {
                             "start" -> toggleTracking(sender.player!!, true)
                             "stop" -> toggleTracking(sender.player!!, false)
+                            else ->  info(config.getString("settings.noArg")!!, sender)
                         }
+                    else
+                        info(config.getString("settings.noArg")!!, sender)
                 } else {
                     info(config.getString("settings.noPerm")!!, sender)
                 }
@@ -122,16 +125,15 @@ class Main: JavaPlugin(), Listener {
     private fun toggleTracking(player: Player, status: Boolean) {
         if (uL == null)
             uL = UniversalLogic()
-        uL?.setTrackingStatus(player, status)
-        info(config.getString("settings.trackSwitch")!!, player)
+        uL?.setTrackingStatus(config, player, status)
     }
 
     private fun info(msg: String, sender: CommandSender) {
-        sender.sendMessage("\u00a77[\u00a7eToolStats\u00a77] $msg")
+        sender.sendMessage("${config.getString("settings.prefix")!!.replace("&", "\u00a7")} ${msg.replace("&", "\u00a7")}")
     }
 
     private fun infoc(msg: String) {
-        Bukkit.getConsoleSender().sendMessage("\u00a77[\u00a7eToolStats\u00a77] $msg")
+        Bukkit.getConsoleSender().sendMessage("${config.getString("settings.prefix")!!.replace("&", "\u00a7")} ${msg.replace("&", "\u00a7")}")
     }
 
 }

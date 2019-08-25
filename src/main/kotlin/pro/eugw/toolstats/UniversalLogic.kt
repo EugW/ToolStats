@@ -108,8 +108,10 @@ class UniversalLogic {
         @Suppress("DEPRECATION") player.inventory.setItemInHand(itemStack)
     }
 
-    fun setTrackingStatus(player: Player, status: Boolean) {
+    fun setTrackingStatus(config: FileConfiguration, player: Player, status: Boolean) {
         @Suppress("DEPRECATION") val itemStack = player.inventory.itemInHand
+        if (itemStack.type.toString() !in config.getStringList("killPlayer.tools") && itemStack.type.toString() !in config.getStringList("killMob.tools") && itemStack.type.toString() !in config.getStringList("break.tools"))
+            return
         val itemMeta = itemStack.itemMeta!!
         val lore = if (itemMeta.lore == null) ArrayList<String>() else itemMeta.lore!!
         val trackingBool = if (status) '1' else '0'
@@ -135,6 +137,7 @@ class UniversalLogic {
         itemMeta.lore = lore
         itemStack.itemMeta = itemMeta
         @Suppress("DEPRECATION") player.inventory.setItemInHand(itemStack)
+        player.sendMessage("${config.getString("settings.prefix")!!.replace("&", "\u00a7")} ${config.getString("settings.trackSwitch")!!.replace("&", "\u00a7")}")
     }
 
     private fun makeHidden(origin: Any): String {
