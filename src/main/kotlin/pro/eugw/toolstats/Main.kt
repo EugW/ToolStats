@@ -20,12 +20,23 @@ fun main() {
 
 class Main: JavaPlugin(), Listener {
 
-    private var uL: UniversalLogic? = null
-
     override fun onEnable() {
         super.onEnable()
+        try {
+            Class.forName("de.tr7zw.nbtapi.NBTCompound")
+        } catch (e: Exception) {
+            infoc("****************************************************")
+            infoc("*  Failed to find NBT API plugin, please download  *")
+            infoc("* https://www.spigotmc.org/resources/nbt-api.7939/ *")
+            infoc("****************************************************")
+            Bukkit.getPluginManager().disablePlugin(this)
+            return
+        }
+        if (Utils.isServerOlderThan114())
+            infoc("Server is older than 1.14 - Using old Lore identifiers")
         Bukkit.getPluginManager().registerEvents(this, this)
         saveDefaultConfig()
+        Utils.initDataFolder(this)
         thread(true) {
             infoc("Version: ${description.version} enabled. Update available: ${description.version != try {
                 JsonParser().parse((URL("https://api.github.com/repos/EugW/toolstats/releases/latest").openConnection() as HttpsURLConnection).inputStream.reader()).asJsonObject["tag_name"].asString
@@ -55,12 +66,16 @@ class Main: JavaPlugin(), Listener {
                 if (sender.hasPermission("toolstats.tstracking")) {
                     if (sender !is Player)
                         return true
-                    if (args.isNotEmpty())
-                        when (args[0]) {
-                            "start" -> toggleTracking(sender.player!!, true)
-                            "stop" -> toggleTracking(sender.player!!, false)
-                            else ->  info(config.getString("settings.noArg")!!, sender)
-                        }
+                    if (args.size >= 2) {
+                        if (arrayListOf("break", "killPlayer", "killMob").contains(args[0]) && arrayListOf("start", "stop").contains(args[1]))
+                            UniversalLogic.setTrackingStatus(config, sender.player!!, args[0], when (args[1]) {
+                                "start" -> true
+                                "stop" -> false
+                                else -> null!! //hack to disable anything else
+                            })
+                        else
+                            info(config.getString("settings.noArg")!!, sender)
+                    }
                     else
                         info(config.getString("settings.noArg")!!, sender)
                 } else {
@@ -81,7 +96,7 @@ class Main: JavaPlugin(), Listener {
             return
         if (player.world.name !in config.getStringList("break.worlds"))
             return
-        nmsInvoke(player, "break")
+        UniversalLogic.calculate(config, player, "break", server)
     }
 
     @EventHandler
@@ -97,7 +112,7 @@ class Main: JavaPlugin(), Listener {
             return
         if (player.world.name !in config.getStringList("killPlayer.worlds"))
             return
-        nmsInvoke(player, "killPlayer")
+        UniversalLogic.calculate(config, player, "killPlayer", server)
     }
 
     @EventHandler
@@ -113,19 +128,7 @@ class Main: JavaPlugin(), Listener {
             return
         if (player.world.name !in config.getStringList("killMob.worlds"))
             return
-        nmsInvoke(player, "killMob")
-    }
-
-    private fun nmsInvoke(player: Player, type: String) {
-        if (uL == null)
-            uL = UniversalLogic()
-        uL?.calculate(config, player, type, server)
-    }
-
-    private fun toggleTracking(player: Player, status: Boolean) {
-        if (uL == null)
-            uL = UniversalLogic()
-        uL?.setTrackingStatus(config, player, status)
+        UniversalLogic.calculate(config, player, "killMob", server)
     }
 
     private fun info(msg: String, sender: CommandSender) {

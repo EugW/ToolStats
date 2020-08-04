@@ -3,7 +3,7 @@ settings:
   reload: 'Config reloaded'
   noPerm: 'No permission'
   trackSwitch: 'Tracking switched'
-  noArg: 'Enter start|stop argument'
+  noArg: 'Command usage: /tstracking [break|killPlayer|killMob] [start|stop]'
 killPlayer:
   enabled: true
   autoStartTracking: true
