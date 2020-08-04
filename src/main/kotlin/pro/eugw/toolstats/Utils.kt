@@ -16,18 +16,6 @@ object Utils {
         minorVersion = versionArray[1].toInt()
     }
 
-    private fun isServerOlder(comparableVersion: String): Boolean {
-        if (majorVersion == null || minorVersion == null)
-            detectVersion()
-        val versionArray = comparableVersion.split(".")
-        if (majorVersion!! < versionArray[0].toInt()) {
-            return true
-        } else if (minorVersion!! < versionArray[1].toInt()) {
-            return true
-        }
-        return false
-    }
-
     private fun isServerNewer(comparableVersion: String): Boolean {
         if (majorVersion == null || minorVersion == null)
             detectVersion()
@@ -40,11 +28,9 @@ object Utils {
         return false
     }
 
-    fun isServerOlderThan114(): Boolean = isServerOlder("1.14")
-
     fun isServerNewerThan113(): Boolean = isServerNewer("1.13")
 
-    fun isServerOlderThan18(): Boolean = isServerOlder("1.8")
+    fun isServerNewerThan17(): Boolean = isServerNewer("1.7")
 
     fun initDataFolder(plugin: JavaPlugin) {
         val file = File(plugin.dataFolder, "cached")

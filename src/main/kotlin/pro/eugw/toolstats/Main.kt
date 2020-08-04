@@ -22,18 +22,21 @@ class Main: JavaPlugin(), Listener {
 
     override fun onEnable() {
         super.onEnable()
-        try {
-            Class.forName("de.tr7zw.nbtapi.NBTCompound")
-        } catch (e: Exception) {
-            infoc("****************************************************")
-            infoc("*  Failed to find NBT API plugin, please download  *")
-            infoc("* https://www.spigotmc.org/resources/nbt-api.7939/ *")
-            infoc("****************************************************")
-            Bukkit.getPluginManager().disablePlugin(this)
-            return
-        }
-        if (Utils.isServerOlderThan114())
+        if (Utils.isServerNewerThan17())
+            try {
+                Class.forName("de.tr7zw.nbtapi.NBTCompound")
+            } catch (e: Exception) {
+                infoc("****************************************************")
+                infoc("*  Failed to find NBT API plugin, please download  *")
+                infoc("* https://www.spigotmc.org/resources/nbt-api.7939/ *")
+                infoc("****************************************************")
+                Bukkit.getPluginManager().disablePlugin(this)
+                return
+            }
+        if (!Utils.isServerNewerThan113() && Utils.isServerNewerThan17())
             infoc("Server is older than 1.14 - Using old Lore identifiers")
+        if (!Utils.isServerNewerThan17())
+            infoc("Server is older than 1.8 - Using old Logic")
         Bukkit.getPluginManager().registerEvents(this, this)
         saveDefaultConfig()
         Utils.initDataFolder(this)
@@ -66,18 +69,29 @@ class Main: JavaPlugin(), Listener {
                 if (sender.hasPermission("toolstats.tstracking")) {
                     if (sender !is Player)
                         return true
-                    if (args.size >= 2) {
-                        if (arrayListOf("break", "killPlayer", "killMob").contains(args[0]) && arrayListOf("start", "stop").contains(args[1]))
-                            UniversalLogic.setTrackingStatus(config, sender.player!!, args[0], when (args[1]) {
-                                "start" -> true
-                                "stop" -> false
-                                else -> null!! //hack to disable anything else
-                            })
-                        else
+                    if (Utils.isServerNewerThan17()) {
+                        if (args.size >= 2) {
+                            if (arrayListOf("break", "killPlayer", "killMob").contains(args[0]) && arrayListOf("start", "stop").contains(args[1]))
+                                NBTLogic.setTrackingStatus(config, sender.player!!, args[0], when (args[1]) {
+                                    "start" -> true
+                                    "stop" -> false
+                                    else -> null!! //hack to disable anything else
+                                })
+                            else
+                                info(config.getString("settings.noArg")!!, sender)
+                        } else
                             info(config.getString("settings.noArg")!!, sender)
+                    } else {
+                        if (args.isNotEmpty())
+                            if (arrayListOf("start", "stop").contains(args[0]))
+                                ClassicLogic.setTrackingStatus(config, sender.player!!, when (args[0]) {
+                                    "start" -> true
+                                    "stop" -> false
+                                    else -> null!! //hack to disable anything else
+                                })
+                            else
+                                info(config.getString("settings.noArg")!!, sender)
                     }
-                    else
-                        info(config.getString("settings.noArg")!!, sender)
                 } else {
                     info(config.getString("settings.noPerm")!!, sender)
                 }
@@ -96,7 +110,10 @@ class Main: JavaPlugin(), Listener {
             return
         if (player.world.name !in config.getStringList("break.worlds"))
             return
-        UniversalLogic.calculate(config, player, "break", server)
+        if (Utils.isServerNewerThan17())
+            NBTLogic.calculate(config, player, "break", server)
+        else
+            ClassicLogic.calculate(config, player, "break", server)
     }
 
     @EventHandler
@@ -112,7 +129,10 @@ class Main: JavaPlugin(), Listener {
             return
         if (player.world.name !in config.getStringList("killPlayer.worlds"))
             return
-        UniversalLogic.calculate(config, player, "killPlayer", server)
+        if (Utils.isServerNewerThan17())
+            NBTLogic.calculate(config, player, "killPlayer", server)
+        else
+            ClassicLogic.calculate(config, player, "killPlayer", server)
     }
 
     @EventHandler
@@ -128,7 +148,10 @@ class Main: JavaPlugin(), Listener {
             return
         if (player.world.name !in config.getStringList("killMob.worlds"))
             return
-        UniversalLogic.calculate(config, player, "killMob", server)
+        if (Utils.isServerNewerThan17())
+            NBTLogic.calculate(config, player, "killMob", server)
+        else
+            ClassicLogic.calculate(config, player, "killMob", server)
     }
 
     private fun info(msg: String, sender: CommandSender) {

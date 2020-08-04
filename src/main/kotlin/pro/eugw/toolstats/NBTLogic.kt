@@ -1,14 +1,17 @@
 package pro.eugw.toolstats
 
 import de.tr7zw.nbtapi.NBTItem
-import org.bukkit.*
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.Server
+import org.bukkit.Sound
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.inventory.ItemStack
 import java.io.File
-import java.lang.Exception
 
-object UniversalLogic {
+object NBTLogic {
 
     fun calculate(config: FileConfiguration, player: Player, type: String, server: Server) {
         @Suppress("DEPRECATION") val itemStack = player.inventory.itemInHand
@@ -35,38 +38,6 @@ object UniversalLogic {
         }
         count++
         nbtItem.setInteger(countNBTTag, count)
-//        for (i in 1..config.getString("$type.reward.count")!!.split(",").size) {
-//            if (config.getBoolean("$type.reward.enabled") && count == config.getString("$type.reward.count")!!.split(",")[i - 1].toInt() && player.hasPermission("toolstats.upgrade")) {
-//                if (config.getBoolean("$type.reward.enchant$i.enabled")) {
-//                    for (pre in config.getStringList("$type.reward.enchant$i.ench")) {
-//                        val ench = pre.split(":")
-//                        @Suppress("DEPRECATION") val enchantment = Enchantment.getByName(ench[0])!!
-//                        if (ench[1].toInt() > itemMeta.getEnchantLevel(enchantment))
-//                            if (config.getBoolean("$type.reward.enchant$i.applyOnlyCompatible")) {
-//                                if (enchantment.canEnchantItem(itemStack))
-//                                    itemMeta.addEnchant(enchantment, ench[1].toInt(), true)
-//                            } else {
-//                                itemMeta.addEnchant(enchantment, ench[1].toInt(), true)
-//                            }
-//                    }
-//                }
-//                if (config.getBoolean("$type.reward.exp$i.enabled")) {
-//                    player.giveExp(config.getInt("$type.reward.exp$i.lvl"))
-//                }
-//                if (config.getBoolean("$type.reward.items$i.enabled")) {
-//                    for (pre in config.getStringList("$type.reward.items$i.give")) {
-//                        val item = pre.split(":")
-//                        player.inventory.addItem(ItemStack(Material.getMaterial(item[0])!!, item[1].toInt()))
-//                    }
-//                }
-//                if (config.getBoolean("$type.reward.sound$i.enabled")) {
-//                    player.playSound(player.location, Sound.valueOf(config.getString("$type.reward.sound$i.sound")!!), 1f, 1f)
-//                }
-//                if (config.getBoolean("$type.reward.command$i.enabled")) {
-//                    Bukkit.dispatchCommand(server.consoleSender, config.getString("$type.reward.command$i.command")!!.replace("%nickname%", player.name))
-//                }
-//            }
-//        }
         val cachedName = File(Utils.dataFolder(), type)
         if (!cachedName.exists())
             cachedName.writeText(config.getStringList("$type.lore")[0])
@@ -98,6 +69,7 @@ object UniversalLogic {
             lore[index + offset] = finalString
         }
         @Suppress("DEPRECATION") player.inventory.setItemInHand(nbtItem.item)
+        reward(config, type, count, player, server)
     }
 
     fun setTrackingStatus(config: FileConfiguration, player: Player, type: String, status: Boolean) {
@@ -108,6 +80,45 @@ object UniversalLogic {
         nbtItem.setBoolean("ToolStats.$type.tracking", status)
         @Suppress("DEPRECATION") player.inventory.setItemInHand(nbtItem.item)
         player.sendMessage("${config.getString("settings.prefix")!!.replace("&", "\u00a7")} ${config.getString("settings.trackSwitch")!!.replace("&", "\u00a7")}")
+    }
+
+    private fun reward(config: FileConfiguration, type: String, count: Int, player: Player, server: Server) {
+        @Suppress("DEPRECATION") val itemStack = player.inventory.itemInHand
+        val itemMeta = itemStack.itemMeta!!
+        for (i in 1..config.getString("$type.reward.count")!!.split(",").size) {
+            if (config.getBoolean("$type.reward.enabled") && count == config.getString("$type.reward.count")!!.split(",")[i - 1].toInt() && player.hasPermission("toolstats.upgrade")) {
+                if (config.getBoolean("$type.reward.enchant$i.enabled")) {
+                    for (pre in config.getStringList("$type.reward.enchant$i.ench")) {
+                        val ench = pre.split(":")
+                        @Suppress("DEPRECATION") val enchantment = Enchantment.getByName(ench[0])!!
+                        if (ench[1].toInt() > itemMeta.getEnchantLevel(enchantment))
+                            if (config.getBoolean("$type.reward.enchant$i.applyOnlyCompatible")) {
+                                if (enchantment.canEnchantItem(itemStack))
+                                    itemMeta.addEnchant(enchantment, ench[1].toInt(), true)
+                            } else {
+                                itemMeta.addEnchant(enchantment, ench[1].toInt(), true)
+                            }
+                    }
+                }
+                if (config.getBoolean("$type.reward.exp$i.enabled")) {
+                    player.giveExp(config.getInt("$type.reward.exp$i.lvl"))
+                }
+                if (config.getBoolean("$type.reward.items$i.enabled")) {
+                    for (pre in config.getStringList("$type.reward.items$i.give")) {
+                        val item = pre.split(":")
+                        player.inventory.addItem(ItemStack(Material.getMaterial(item[0])!!, item[1].toInt()))
+                    }
+                }
+                if (config.getBoolean("$type.reward.sound$i.enabled")) {
+                    player.playSound(player.location, Sound.valueOf(config.getString("$type.reward.sound$i.sound")!!), 1f, 1f)
+                }
+                if (config.getBoolean("$type.reward.command$i.enabled")) {
+                    Bukkit.dispatchCommand(server.consoleSender, config.getString("$type.reward.command$i.command")!!.replace("%nickname%", player.name))
+                }
+            }
+        }
+        itemStack.itemMeta = itemMeta
+        @Suppress("DEPRECATION") player.inventory.setItemInHand(itemStack)
     }
 
 }
