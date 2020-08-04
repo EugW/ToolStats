@@ -10,7 +10,7 @@ commands:
     usage: /toolstats
   tstracking:
     description: Starts - stops tracking
-    usage: /tstracking [start|stop]
+    usage: /tstracking (only >1.7)[break|killPlayer|killMob] [start|stop]
 permissions:
   toolstats.reload:
     description: Reload permission
