@@ -66,9 +66,7 @@ class Main: JavaPlugin(), Listener {
                 return true
             }
             "tstracking" -> {
-                if (sender.hasPermission("toolstats.tstracking")) {
-                    if (sender !is Player)
-                        return true
+                if (sender is Player && sender.hasPermission("toolstats.tstracking")) {
                     if (Utils.isServerNewerThan17()) {
                         if (args.size >= 2) {
                             if (arrayListOf("break", "killPlayer", "killMob").contains(args[0]) && arrayListOf("start", "stop").contains(args[1]))
@@ -91,6 +89,18 @@ class Main: JavaPlugin(), Listener {
                                 })
                             else
                                 info(config.getString("settings.noArg")!!, sender)
+                    }
+                } else {
+                    info(config.getString("settings.noPerm")!!, sender)
+                }
+                return true
+            }
+            "tsclearlore" -> {
+                if (sender is Player && sender.hasPermission("toolstats.tsclearlore")) {
+                    if (Utils.isServerNewerThan17()) {
+                        NBTLogic.resetLore(sender.player!!, config)
+                    } else {
+                        info(config.getString("settings.outdatedServer")!!, sender)
                     }
                 } else {
                     info(config.getString("settings.noPerm")!!, sender)

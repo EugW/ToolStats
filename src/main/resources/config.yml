@@ -4,6 +4,7 @@ settings:
   noPerm: 'No permission'
   trackSwitch: 'Tracking switched'
   noArg: 'Command usage: /tstracking [break|killPlayer|killMob] [start|stop]'
+  outdatedServer: 'Do not use this command on servers older than 1.8, it will reset your counter'
 killPlayer:
   enabled: true
   autoStartTracking: true

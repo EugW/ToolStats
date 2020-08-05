@@ -9,7 +9,6 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.io.File
 
 object NBTLogic {
 
@@ -18,11 +17,10 @@ object NBTLogic {
         if (itemStack.type.toString() !in config.getStringList("$type.tools"))
             return
         val nbtItem = NBTItem(itemStack)
-        if (!config.getBoolean("$type.trackItemsWCustomNames")/* && itemMeta.displayName.isNotBlank()*/)
-            return
         if (!nbtItem.hasKey("display"))
             nbtItem.addCompound("display")
-        println(nbtItem.compound)
+        if (!config.getBoolean("$type.trackItemsWCustomNames") && nbtItem.getCompound("display").hasKey("Name"))
+            return
         val lore = nbtItem.getCompound("display").getStringList("Lore")
         val trackingNBTTag = "ToolStats.$type.tracking"
         val tracking = if (nbtItem.hasKey(trackingNBTTag)) nbtItem.getBoolean(trackingNBTTag) else {
@@ -38,21 +36,13 @@ object NBTLogic {
         }
         count++
         nbtItem.setInteger(countNBTTag, count)
-        val cachedName = File(Utils.dataFolder(), type)
-        if (!cachedName.exists())
-            cachedName.writeText(config.getStringList("$type.lore")[0])
-        var oldName: String? = null
-        if (cachedName.readText() != config.getStringList("$type.lore")[0])
-            oldName = cachedName.readText()
-        cachedName.writeText(config.getStringList("$type.lore")[0])
         val result = lore.find {
             var baseTargetString = it
             if (Utils.isServerNewerThan113()) {
                 baseTargetString = baseTargetString.replace("{\"text\":\"", "").replace("\"}", "")
             }
             val targetString = Regex("§[A-z0-9]").replace(baseTargetString, "")
-            val configLore = Regex("&[A-z0-9]").replace(
-                    oldName ?: config.getStringList("$type.lore")[0], "")
+            val configLore = Regex("&[A-z0-9]").replace(config.getStringList("$type.lore")[0], "")
             if (configLore.contains("%count%"))
                 targetString.startsWith(configLore.split("%count%")[0]) && targetString.endsWith(configLore.split("%count%")[1])
             else
@@ -118,6 +108,16 @@ object NBTLogic {
             }
         }
         itemStack.itemMeta = itemMeta
+        @Suppress("DEPRECATION") player.inventory.setItemInHand(itemStack)
+    }
+
+    fun resetLore(player: Player, config: FileConfiguration) {
+        @Suppress("DEPRECATION") val itemStack = player.inventory.itemInHand
+        if (itemStack.type.toString() !in config.getStringList("killPlayer.tools") && itemStack.type.toString() !in config.getStringList("killMob.tools") && itemStack.type.toString() !in config.getStringList("break.tools"))
+            return
+        val meta = itemStack.itemMeta!!
+        meta.lore = ArrayList<String>()
+        itemStack.itemMeta = meta
         @Suppress("DEPRECATION") player.inventory.setItemInHand(itemStack)
     }
 
