@@ -4,6 +4,8 @@ main: pro.eugw.toolstats.Main
 version: '4.7.1'
 api-version: '1.16'
 author: EugeneWhite(EugW)
+softdepend:
+  - NBTAPI
 commands:
   toolstats:
     description: Reload plugin config

@@ -14,10 +14,6 @@ import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 import kotlin.concurrent.thread
 
-fun main() {
-    Main()
-}
-
 class Main: JavaPlugin(), Listener {
 
     override fun onEnable() {
@@ -26,10 +22,10 @@ class Main: JavaPlugin(), Listener {
             try {
                 Class.forName("de.tr7zw.nbtapi.NBTCompound")
             } catch (e: Exception) {
-                infoc("****************************************************")
-                infoc("*  Failed to find NBT API plugin, please download  *")
-                infoc("* https://www.spigotmc.org/resources/nbt-api.7939/ *")
-                infoc("****************************************************")
+                infoc("§4****************************************************")
+                infoc("§4*§f  Failed to find NBT API plugin, please download  §4*")
+                infoc("§4*§f https://www.spigotmc.org/resources/nbt-api.7939/ §4*")
+                infoc("§4****************************************************")
                 Bukkit.getPluginManager().disablePlugin(this)
                 return
             }
